@@ -1,0 +1,215 @@
+<head>
+    <meta charset="UTF-8">
+    <title>Empire Boost - Panel Officiel</title>
+    <link rel="icon" href="https://emojicdn.elk.sh/🏴‍☠️">
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: #131c2e;
+            --accent-red: #e11d48;
+            --accent-gold: #f59e0b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #1e293b;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        header h1 {
+            color: var(--accent-gold);
+            font-size: 2.2rem;
+            margin-bottom: 5px;
+        }
+        header p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
+        .card h3 {
+            margin-top: 0;
+            color: var(--text-main);
+            border-bottom: 2px solid var(--accent-red);
+            padding-bottom: 8px;
+            font-size: 1.15rem;
+        }
+        label {
+            display: block;
+            margin-top: 12px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin-top: 5px;
+            background-color: #090d16;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 0.95rem;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent-gold);
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 18px;
+            background: linear-gradient(135deg, #e11d48, #be123c);
+            color: white;
+            border: none;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: opacity 0.2s;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        pre {
+            background-color: #090d16;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-size: 0.85rem;
+            color: #38bdf8;
+            border: 1px solid var(--border-color);
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>🏴‍☠️ EMPIRE BOOST</h1>
+            <p>Panel de Gestion & Automatisation des Abonnements</p>
+        </header>
+
+        <div class="card">
+            <h3>1. Inscription (Essai 3 Jours)</h3>
+            <label>Nom d'utilisateur</label>
+            <input type="text" id="reg-username" placeholder="Ex: Capitaine">
+            <label>Numéro de téléphone</label>
+            <input type="text" id="reg-phone" placeholder="Ex: +243XXXXXXXXX">
+            <button onclick="registerUser()">S'inscrire</button>
+        </div>
+
+        <div class="card">
+            <h3>2. Lancer un Boost</h3>
+            <label>ID Utilisateur</label>
+            <input type="number" id="boost-userid" placeholder="Ex: 1">
+            <label>Plateforme Cible</label>
+            <select id="boost-platform">
+                <option value="TikTok">TikTok</option>
+                <option value="Instagram">Instagram</option>
+                <option value="Facebook">Facebook</option>
+            </select>
+            <label>Lien de la vidéo / publication</label>
+            <input type="text" id="boost-url" placeholder="https://...">
+            <button onclick="launchBoost()">Lancer le Boost</button>
+        </div>
+
+        <div class="card">
+            <h3>3. Valider un Abonnement</h3>
+            <label>ID Utilisateur</label>
+            <input type="number" id="pay-userid" placeholder="Ex: 1">
+            <label>Type de Pass (Grille Tarifaire)</label>
+            <select id="pay-plan">
+                <option value="semaine">Pass Semaine (5$ - 7 jours)</option>
+                <option value="mensuel">Pass Mensuel (15$ - 30 jours)</option>
+                <option value="vip">Pass VIP (20$ - 30 jours)</option>
+            </select>
+            <label>Méthode de Paiement (Mobile Money)</label>
+            <input type="text" id="pay-method" placeholder="M-Pesa / Airtel Money">
+            <label>ID de Transaction</label>
+            <input type="text" id="pay-txid" placeholder="Ex: MP261118...">
+            <button onclick="verifyPayment()">Valider le Paiement</button>
+        </div>
+
+        <div class="card">
+            <h3>Console / Réponse Serveur</h3>
+            <pre id="output">En attente d'action...</pre>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "http://127.0.0.1:8000";
+
+        async function registerUser() {
+            const username = document.getElementById('reg-username').value;
+            const phone = document.getElementById('reg-phone').value;
+            try {
+                const res = await fetch(`${API_URL}/register`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({username, phone})
+                });
+                const data = await res.json();
+                document.getElementById('output').innerText = JSON.stringify(data, null, 2);
+                if(data.user_id) { alert(`Inscription réussie ! Ton ID est : ${data.user_id}`); }
+            } catch (err) {
+                document.getElementById('output').innerText = "Erreur de connexion au serveur.";
+            }
+        }
+
+        async function launchBoost() {
+            const user_id = parseInt(document.getElementById('boost-userid').value);
+            const platform = document.getElementById('boost-platform').value;
+            const video_url = document.getElementById('boost-url').value;
+            try {
+                const res = await fetch(`${API_URL}/launch-free-boost`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({user_id, platform, video_url})
+                });
+                const data = await res.json();
+                document.getElementById('output').innerText = JSON.stringify(data, null, 2);
+            } catch (err) {
+                document.getElementById('output').innerText = "Erreur de connexion au serveur.";
+            }
+        }
+
+        async function verifyPayment() {
+            const user_id = parseInt(document.getElementById('pay-userid').value);
+            const plan_type = document.getElementById('pay-plan').value;
+            const payment_method = document.getElementById('pay-method').value;
+            const transaction_id = document.getElementById('pay-txid').value;
+            try {
+                const res = await fetch(`${API_URL}/verify-payment`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({user_id, plan_type, payment_method, transaction_id})
+                });
+                const data = await res.json();
+                document.getElementById('output').innerText = JSON.stringify(data, null, 2);
+                if(data.success) { alert(`Abonnement ${plan_type.toUpperCase()} activé avec succès !`); }
+            } catch (err) {
+                document.getElementById('output').innerText = "Erreur de connexion au serveur.";
+            }
+        }
+    </script>
+</body>
+</html>
