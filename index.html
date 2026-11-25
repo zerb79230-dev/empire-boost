@@ -3,348 +3,512 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Empire Boost Pro — Plateforme de Croissance Vidéo</title>
+  <title>Empire Boost</title>
   <style>
     :root {
-      --bg: #080c17;
-      --surface: #111827;
-      --surface-2: #1a2336;
-      --border: rgba(255, 255, 255, 0.09);
-      --primary: #ff3b5c;
-      --primary-hover: #e02e4d;
-      --gold: #f59e0b;
-      --green: #10b981;
+      --bg: #070a10;
+      --surface: #0d121d;
+      --surface-2: #151c2c;
+      --border: rgba(255, 255, 255, 0.12);
+      --coral: #e56b6f;
+      --coral-hover: #d4595e;
+      --white-pill: #f4f6fa;
       --text: #f8fafc;
-      --muted: #94a3b8;
+      --muted: #9aa4b8;
+      --blue: #3b82f6;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body {
-      background: radial-gradient(circle at top, #151e36 0%, var(--bg) 60%);
+      background: radial-gradient(circle at 50% 0%, #162238 0%, var(--bg) 55%);
       color: var(--text);
       min-height: 100vh;
-      padding-bottom: 85px;
+      padding-bottom: 84px;
     }
-    .container { max-width: 480px; margin: 0 auto; padding: 18px 16px; }
-    header {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border);
+    .phone-frame {
+      max-width: 430px;
+      margin: 0 auto;
+      min-height: 100vh;
+      padding: 20px 18px 24px;
     }
-    .brand { display: flex; align-items: center; gap: 8px; }
-    .brand-badge {
-      background: linear-gradient(135deg, var(--primary), #ff7a45);
-      width: 30px; height: 30px; border-radius: 8px;
-      display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 15px;
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      min-height: 28px;
     }
-    .brand h1 { font-size: 18px; font-weight: 800; letter-spacing: 0.3px; }
-    .brand span { color: var(--primary); }
-    .user-pill {
-      background: var(--surface-2); border: 1px solid var(--border);
-      padding: 6px 11px; border-radius: 999px; font-size: 12px; color: var(--muted);
+    .session-tag {
+      font-size: 11px;
+      color: var(--muted);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      padding: 4px 10px;
+      border-radius: 999px;
     }
-    .user-pill.connected { color: #34d399; border-color: rgba(52, 211, 153, 0.35); }
+    .session-tag.ok { color: #6ee7b7; border-color: rgba(110, 231, 183, 0.35); }
 
-    .stepper {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 18px;
+    .brand-center {
+      text-align: center;
+      margin-top: 8px;
+      margin-bottom: 10px;
     }
-    .step-btn {
-      background: var(--surface); border: 1px solid var(--border); color: var(--muted);
-      padding: 9px 6px; border-radius: 999px; font-size: 12px; font-weight: 600;
-      cursor: pointer; text-align: center; transition: 0.2s;
-    }
-    .step-btn.active {
-      border-color: var(--primary); color: var(--text);
-      background: rgba(255, 59, 92, 0.14);
+    .crown { font-size: 20px; color: #c7d2fe; display: block; margin-bottom: 4px; }
+    .brand-title { font-size: 28px; font-weight: 700; letter-spacing: -0.4px; color: #ffffff; }
+    .welcome-sub {
+      text-align: center;
+      color: #cbd5e1;
+      font-size: 15px;
+      line-height: 1.45;
+      max-width: 270px;
+      margin: 10px auto 26px;
     }
 
-    .card {
+    .pill-btn {
+      width: 100%;
+      height: 50px;
+      border-radius: 999px;
+      border: none;
+      background: var(--white-pill);
+      color: #0b0f17;
+      font-size: 15px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      cursor: pointer;
+      margin-bottom: 14px;
+      transition: transform 0.12s ease, opacity 0.15s ease;
+    }
+    .pill-btn:active { transform: scale(0.99); }
+
+    .coral-pill-btn {
+      width: 100%;
+      height: 46px;
+      border-radius: 999px;
+      border: none;
+      background: var(--coral);
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 6px;
+      margin-bottom: 14px;
+    }
+    .coral-pill-btn:hover { background: var(--coral-hover); }
+
+    .dots {
+      display: flex;
+      justify-content: center;
+      gap: 7px;
+      margin-top: 18px;
+    }
+    .dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #334155; cursor: pointer; border: none;
+    }
+    .dot.active { background: #60a5fa; }
+
+    .screen-heading {
+      font-size: 25px;
+      font-weight: 700;
+      line-height: 1.22;
+      margin-bottom: 16px;
+      color: #ffffff;
+    }
+    .trial-badge-wrap { text-align: center; margin-bottom: 20px; }
+    .trial-badge {
+      display: inline-block;
+      background: #141b29;
+      border: 1px solid rgba(255,255,255,0.14);
+      color: #e2e8f0;
+      font-size: 13px;
+      padding: 7px 16px;
+      border-radius: 999px;
+    }
+
+    .field-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #f1f5f9;
+      margin-bottom: 4px;
+    }
+    .field-hint {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .platform-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #0c111b;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      margin-bottom: 16px;
+    }
+    .platform-current {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 15px;
+      font-weight: 600;
+    }
+    .platform-icons {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .plat-chip {
+      width: 28px; height: 28px; border-radius: 7px;
+      border: 1px solid var(--border);
+      background: #161f33;
+      color: #fff; font-size: 13px; font-weight: 700;
+      cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+    }
+    .plat-chip.selected { border-color: var(--coral); background: rgba(229, 107, 111, 0.22); }
+
+    input[type="text"], input[type="email"], input[type="tel"], input[type="password"], input[type="url"], select {
+      width: 100%;
+      height: 44px;
+      background: #0b1019;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      padding: 0 13px;
+      color: #ffffff;
+      font-size: 14px;
+      margin-bottom: 12px;
+      outline: none;
+    }
+    input:focus, select:focus { border-color: #60a5fa; }
+
+    .trial-footer-note {
+      text-align: center;
+      font-size: 13px;
+      color: #cbd5e1;
+    }
+
+    /* Écran 3 timeline & carte abonnement */
+    .timeline-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 14px;
+      position: relative;
+    }
+    .tl-icon {
+      width: 26px; height: 26px; border-radius: 50%;
+      background: rgba(59, 130, 246, 0.18);
+      color: #60a5fa;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; flex-shrink: 0; margin-top: 2px;
+    }
+    .tl-icon.lock { background: rgba(229, 107, 111, 0.2); color: #f87171; }
+    .tl-text { font-size: 14px; line-height: 1.4; color: #e2e8f0; }
+
+    .pro-card {
+      background: #0d1320;
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 16px;
+      padding: 16px;
+      margin-top: 10px;
+    }
+    .pro-card h3 { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+    .pro-sub { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
+    .radio-line {
+      display: flex; align-items: center; gap: 9px;
+      font-size: 14px; color: #f1f5f9; margin-bottom: 8px; cursor: pointer;
+    }
+    .radio-line input { width: auto; height: auto; margin: 0; accent-color: var(--blue); }
+
+    .pay-badges {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 8px;
+      font-size: 11px;
+      color: #cbd5e1;
+    }
+    .momo-tag {
+      background: #fbbf24; color: #111827; font-weight: 800;
+      padding: 3px 7px; border-radius: 5px; font-size: 10px;
+    }
+    .visa-tag {
+      background: #1e293b; border: 1px solid rgba(255,255,255,0.2);
+      padding: 3px 8px; border-radius: 5px; font-weight: 700;
+    }
+
+    .panel-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      margin-top: 12px;
+    }
+    .msg {
+      margin-top: 10px; padding: 10px 12px; border-radius: 10px;
+      font-size: 13px; line-height: 1.4;
+    }
+    .msg.ok { background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); color: #6ee7b7; }
+    .msg.warn { background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); color: #fcd34d; }
+    .msg.err { background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #fca5a5; }
+
+    .kpi-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
+    .kpi-box {
       background: var(--surface); border: 1px solid var(--border);
-      border-radius: 18px; padding: 20px; margin-bottom: 14px;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+      border-radius: 12px; padding: 11px 6px; text-align: center;
     }
-    .card h2 { font-size: 19px; margin-bottom: 6px; }
-    .subtitle { font-size: 13px; color: var(--muted); line-height: 1.45; margin-bottom: 16px; }
+    .kpi-num { font-size: 17px; font-weight: 700; }
+    .kpi-lbl { font-size: 11px; color: var(--muted); margin-top: 2px; }
 
-    .oauth-btn {
-      width: 100%; padding: 12px 14px; border-radius: 12px;
-      background: var(--surface-2); border: 1px solid var(--border);
-      color: var(--text); font-size: 14px; font-weight: 600;
-      display: flex; align-items: center; justify-content: center; gap: 10px;
-      cursor: pointer; margin-bottom: 10px; transition: 0.2s;
-    }
-    .oauth-btn:hover { border-color: rgba(255,255,255,0.28); background: #222d44; }
-
-    .divider {
-      text-align: center; font-size: 12px; color: var(--muted);
-      margin: 14px 0; position: relative;
-    }
-    label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; font-weight: 600; }
-    input, select {
-      width: 100%; padding: 12px 13px; border-radius: 11px;
-      background: #0b1120; border: 1px solid var(--border);
-      color: var(--text); font-size: 14px; margin-bottom: 13px; outline: none;
-    }
-    input:focus, select:focus { border-color: var(--primary); }
-
-    .btn-primary {
-      width: 100%; padding: 13px; border: none; border-radius: 12px;
-      background: linear-gradient(135deg, var(--primary), #ff5964);
-      color: #fff; font-size: 15px; font-weight: 700; cursor: pointer;
-      box-shadow: 0 6px 20px rgba(255, 59, 92, 0.35);
-    }
-    .btn-secondary {
-      width: 100%; padding: 11px; border: 1px solid var(--border); border-radius: 11px;
-      background: var(--surface-2); color: var(--text); font-size: 13px; font-weight: 600; cursor: pointer;
+    .camp-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 12px; margin-bottom: 10px; font-size: 13px;
     }
 
-    .info-box {
-      background: var(--surface-2); border: 1px solid var(--border);
-      border-radius: 12px; padding: 13px; margin-bottom: 14px; font-size: 13px; line-height: 1.5;
-    }
-    .alert {
-      padding: 12px 14px; border-radius: 12px; font-size: 13px; margin-top: 12px; line-height: 1.45;
-    }
-    .alert.success { background: rgba(16, 185, 129, 0.14); border: 1px solid rgba(16, 185, 129, 0.4); color: #6ee7b7; }
-    .alert.warning { background: rgba(245, 158, 11, 0.14); border: 1px solid rgba(245, 158, 11, 0.4); color: #fcd34d; }
-    .alert.error { background: rgba(239, 68, 68, 0.14); border: 1px solid rgba(239, 68, 68, 0.4); color: #fca5a5; }
-
-    .kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
-    .kpi {
-      background: var(--surface-2); border: 1px solid var(--border);
-      border-radius: 12px; padding: 12px 8px; text-align: center;
-    }
-    .kpi .val { font-size: 17px; font-weight: 800; color: #fff; }
-    .kpi .lbl { font-size: 11px; color: var(--muted); margin-top: 3px; }
-
-    .campaign-item {
-      background: #0d1424; border: 1px solid var(--border);
-      border-radius: 12px; padding: 12px; margin-bottom: 10px;
-    }
-    .badge {
-      display: inline-block; padding: 3px 8px; border-radius: 999px;
-      font-size: 11px; font-weight: 700;
-    }
-    .badge.live { background: rgba(16, 185, 129, 0.18); color: #34d399; }
-    .badge.pending { background: rgba(245, 158, 11, 0.18); color: #fbbf24; }
-    .badge.rejected { background: rgba(239, 68, 68, 0.18); color: #f87171; }
-
-    .bottom-nav {
+    .bottom-bar {
       position: fixed; bottom: 0; left: 0; right: 0;
-      background: rgba(11, 17, 32, 0.96); backdrop-filter: blur(10px);
-      border-top: 1px solid var(--border);
-      display: flex; justify-content: space-around; padding: 10px 0;
+      background: #090d16; border-top: 1px solid var(--border);
+      display: flex; justify-content: space-around; padding: 9px 0;
     }
-    .nav-item {
-      background: none; border: none; color: var(--muted); font-size: 12px; font-weight: 600;
-      cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px;
+    .b-btn {
+      background: none; border: none; color: #94a3b8;
+      font-size: 11px; display: flex; flex-direction: column; align-items: center; gap: 3px;
+      cursor: pointer;
     }
-    .nav-item.active { color: var(--primary); }
+    .b-btn.active { color: #ffffff; font-weight: 600; }
     .hidden { display: none !important; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <div class="brand">
-        <div class="brand-badge">EB</div>
-        <h1>Empire <span>Boost</span></h1>
-      </div>
-      <div id="userPill" class="user-pill">Non connecté</div>
-    </header>
-
-    <div id="stepperBar" class="stepper">
-      <button id="step1Btn" class="step-btn active" onclick="goStep(1)">1. Identité</button>
-      <button id="step2Btn" class="step-btn" onclick="goStep(2)">2. Essai (1 vidéo)</button>
-      <button id="step3Btn" class="step-btn" onclick="goStep(3)">3. Abonnement</button>
+  <div class="phone-frame">
+    <div class="top-bar">
+      <button onclick="goScreen(1)" style="background:none;border:none;color:#94a3b8;font-size:12px;cursor:pointer;">Étapes</button>
+      <div id="userTag" class="session-tag">Non connecté</div>
     </div>
 
-    <!-- ÉTAPE 1 : CONNEXION & IDENTITÉ OBLIGATOIRE -->
-    <section id="viewStep1" class="card">
-      <h2>Connexion & Identité</h2>
-      <p class="subtitle">Identifiez-vous avec votre compte Google, iCloud ou votre numéro pour débloquer votre essai gratuit d'1 vidéo.</p>
-
-      <button class="oauth-btn" onclick="openSocialForm('google')">
-        <strong>G</strong> Continuer avec un compte Google
-      </button>
-      <button class="oauth-btn" onclick="openSocialForm('icloud')">
-        <strong></strong> Continuer avec iCloud
-      </button>
-
-      <!-- Formulaire de vérification compte Google / iCloud -->
-      <div id="socialVerifyBox" class="info-box hidden">
-        <h3 id="socialTitle" style="font-size:14px; margin-bottom:8px;">Vérification de votre compte</h3>
-        <label>Votre nom complet</label>
-        <input id="socialName" type="text" placeholder="Ex: Glodi Mwetome" />
-        <label id="socialEmailLabel">Adresse e-mail du compte</label>
-        <input id="socialEmail" type="email" placeholder="exemple@gmail.com" />
-        <button class="btn-primary" onclick="submitSocialAuth()">Valider mon compte</button>
+    <!-- ÉCRAN 1 : CONNEXION -->
+    <section id="screen1">
+      <div class="brand-center">
+        <span class="crown">♛</span>
+        <div class="brand-title">Empire Boost</div>
       </div>
+      <p class="welcome-sub">Bienvenue ! Commençons par créer votre compte.</p>
 
-      <div class="divider">ou avec votre numéro de téléphone (tous pays)</div>
+      <button class="pill-btn" onclick="openAuthModal('google')">
+        <span style="color:#ea4335;font-weight:800;">G</span> Se connecter avec Google
+      </button>
+      <button class="pill-btn" onclick="openAuthModal('icloud')">
+        <span></span> Se connecter avec Apple
+      </button>
+      <button class="pill-btn" onclick="openAuthModal('phone')">
+        <span>📞</span> Continuer avec un numéro de téléphone
+      </button>
 
-      <label>Numéro de téléphone (ex: +243..., +33..., +225...)</label>
-      <input id="phoneInput" type="tel" placeholder="+243 82 000 0000" />
-
-      <label>Mot de passe utilisateur</label>
-      <input id="passwordInput" type="password" placeholder="Votre mot de passe" />
-
-      <button class="btn-primary" onclick="submitPhoneAuth()">Continuer</button>
-      <div id="authMsg"></div>
-    </section>
-
-    <!-- ÉTAPE 2 : ESSAI GRATUIT 1 VIDÉO -->
-    <section id="viewStep2" class="card hidden">
-      <h2>Essai Gratuit — 1 Vidéo Max</h2>
-      <p class="subtitle">Configurez votre campagne de boostage. Limité strictement à 1 vidéo gratuite par compte vérifié.</p>
-
-      <div class="info-box">
-        <div><strong>Compte :</strong> <span id="accountLabel">-</span></div>
-        <div><strong>Quota essai restant :</strong> <span id="quotaLabel">1 / 1 vidéo</span></div>
-        <div><strong>Statut abonnement :</strong> <span id="subStatusLabel">Essai gratuit</span></div>
+      <div id="authFormBox" class="panel-box hidden">
+        <div id="authFormTitle" style="font-weight:700;margin-bottom:10px;font-size:14px;">Identification</div>
+        <div id="socialFields">
+          <label class="field-hint">Nom complet</label>
+          <input id="authName" type="text" placeholder="Ex: Glodi Mwetome" />
+          <label class="field-hint">Adresse e-mail</label>
+          <input id="authEmail" type="email" placeholder="exemple@gmail.com" />
+        </div>
+        <div id="phoneFields" class="hidden">
+          <label class="field-hint">Numéro international (ex: +243...)</label>
+          <input id="authPhone" type="tel" placeholder="+243 82 000 0000" />
+          <label class="field-hint">Mot de passe</label>
+          <input id="authPass" type="password" placeholder="Votre mot de passe" />
+        </div>
+        <button class="coral-pill-btn" style="margin-bottom:4px;" onclick="submitAuth()">Valider et continuer</button>
       </div>
+      <div id="authFeedback"></div>
 
-      <label>Plateforme cible</label>
-      <select id="platformSelect">
-        <option value="TikTok">TikTok (Algorithme For You)</option>
-        <option value="Instagram">Instagram (Reels & Découverte)</option>
-        <option value="Facebook">Facebook (Vidéos & Pages)</option>
-      </select>
-
-      <label>Objectif de croissance</label>
-      <select id="objectiveSelect">
-        <option value="Vues & Viralité">Maximiser les Vues & Viralité</option>
-        <option value="Abonnés qualifiés">Gagner des Abonnés qualifiés</option>
-        <option value="Engagement (Likes & Partages)">Booster l'Engagement</option>
-      </select>
-
-      <label>Lien de la vidéo</label>
-      <input id="videoUrlInput" type="url" placeholder="https://vm.tiktok.com/..." />
-
-      <button class="btn-primary" onclick="launchBoost()">Lancer le boost maintenant</button>
-      <div id="boostMsg"></div>
-
-      <div style="margin-top:12px; text-align:center;">
-        <button class="btn-secondary" onclick="goStep(3)">Passer à l'abonnement illimité</button>
+      <div class="dots">
+        <button class="dot active" onclick="goScreen(1)"></button>
+        <button class="dot" onclick="goScreen(2)"></button>
+        <button class="dot" onclick="goScreen(3)"></button>
       </div>
     </section>
 
-    <!-- ÉTAPE 3 : ABONNEMENT & PAIEMENT VÉRIFIÉ -->
-    <section id="viewStep3" class="card hidden">
-      <h2>Passer à l'Abonnement</h2>
-      <p class="subtitle">Après votre vidéo gratuite, choisissez un pass. Chaque paiement est vérifié avant activation.</p>
-
-      <div class="info-box">
-        <div style="color:#fbbf24; font-weight:700; margin-bottom:4px;">1. Essai gratuit : 1 vidéo maximum par compte.</div>
-        <div style="color:#34d399; font-weight:700;">2. Sécurité paiement : Activation après vérification réelle de votre transaction.</div>
+    <!-- ÉCRAN 2 : ESSAI GRATUIT 1 VIDÉO -->
+    <section id="screen2" class="hidden">
+      <h1 class="screen-heading">Étape 2 : Lancez votre Boost (Essai Gratuit)</h1>
+      <div class="trial-badge-wrap">
+        <span id="trialPill" class="trial-badge">Essai limité à 1 vidéo</span>
       </div>
 
-      <label>Formule d'abonnement</label>
-      <select id="planSelect">
-        <option value="Pass Semaine (5$ - 7 jours)">Pass Semaine (5$ — 7 jours)</option>
-        <option value="Pass Mois (15$ - 30 jours)" selected>Pass Mois (15$ — 30 jours)</option>
-      </select>
+      <span class="field-label">Sélectionner la plateforme</span>
+      <span class="field-hint">(Onampe sssossible)</span>
+      <div class="platform-bar">
+        <div class="platform-current">
+          <span id="selectedPlatIcon">♪</span>
+          <span id="selectedPlatName">TikTok</span>
+        </div>
+        <div class="platform-icons">
+          <button type="button" class="plat-chip" onclick="choosePlatform('Facebook', 'f')" title="Facebook">f</button>
+          <button type="button" class="plat-chip" onclick="choosePlatform('Instagram', '◎')" title="Instagram">◎</button>
+          <button type="button" class="plat-chip selected" onclick="choosePlatform('TikTok', '♪')" title="TikTok">♪</button>
+        </div>
+      </div>
 
-      <label>Méthode de paiement</label>
-      <select id="methodSelect">
-        <option value="M-Pesa">M-Pesa</option>
-        <option value="Airtel">Airtel Money</option>
-        <option value="Carte Visa">Carte Visa</option>
-      </select>
+      <span class="field-label">Lien de la vidéo / publication</span>
+      <input id="videoLinkInput" type="url" placeholder="ex : https://..." />
 
-      <label>ID de transaction / Référence réelle</label>
-      <input id="txRefInput" type="text" placeholder="Ex: MP261125.1708.D75976" />
+      <button class="coral-pill-btn" onclick="runFreeTrial()">Lancer le Boost (Gratuit)</button>
+      <div id="trialQuotaText" class="trial-footer-note">1 vidéo disponible dans votre essai</div>
+      <div id="trialFeedback"></div>
 
-      <button class="btn-primary" onclick="submitPayment()">Envoyer pour vérification</button>
-      <div id="paymentMsg"></div>
+      <div style="margin-top:14px;text-align:center;">
+        <button onclick="goScreen(3)" style="background:none;border:none;color:#93c5fd;font-size:13px;cursor:pointer;text-decoration:underline;">
+          Aller à l'Étape 3 : Abonnement
+        </button>
+      </div>
+
+      <div class="dots">
+        <button class="dot" onclick="goScreen(1)"></button>
+        <button class="dot active" onclick="goScreen(2)"></button>
+        <button class="dot" onclick="goScreen(3)"></button>
+      </div>
+    </section>
+
+    <!-- ÉCRAN 3 : ABONNEMENT -->
+    <section id="screen3" class="hidden">
+      <h1 class="screen-heading">Étape 3 : Valider un Abonnement</h1>
+
+      <div class="timeline-row">
+        <div class="tl-icon">🚀</div>
+        <div class="tl-text">Aujourd'hui - Votre 1er boost gratuit est lancé !</div>
+      </div>
+      <div class="timeline-row">
+        <div class="tl-icon lock">🔒</div>
+        <div class="tl-text">Pour continuer à booster vos vidéos, passez au niveau supérieur</div>
+      </div>
+
+      <div class="pro-card">
+        <h3>Abonnement Empire Pro</h3>
+        <div class="pro-sub">Accès illimité pour seulement</div>
+
+        <label class="radio-line">
+          <input type="radio" name="planRadio" value="Pass Semaine (5$ - 7 jours)" checked />
+          <span>5$ / semaine</span>
+        </label>
+        <label class="radio-line">
+          <input type="radio" name="planRadio" value="Pass Mois (15$ - 30 jours)" />
+          <span>Niveau supérieur (15$ / mois)</span>
+        </label>
+
+        <div style="margin-top:12px;">
+          <label class="field-hint">Mode de paiement</label>
+          <select id="payMethod">
+            <option value="M-Pesa">Mobile Money — M-Pesa</option>
+            <option value="Airtel">Mobile Money — Airtel</option>
+            <option value="Carte Visa">Carte Bancaire / Visa</option>
+          </select>
+
+          <label class="field-hint">Référence de transaction</label>
+          <input id="txRef" type="text" placeholder="Ex: MP261125.1708.D75976" />
+        </div>
+
+        <button class="pill-btn" style="height:44px;margin-bottom:8px;font-size:14px;" onclick="sendSubscription()">
+          S'abonner & Débloquer les Boosts
+        </button>
+
+        <div class="pay-badges">
+          <span class="momo-tag">Mobile Money</span>
+          <span class="visa-tag">💳 Carte</span>
+        </div>
+      </div>
+      <div id="subFeedback"></div>
+
+      <div class="dots">
+        <button class="dot" onclick="goScreen(1)"></button>
+        <button class="dot" onclick="goScreen(2)"></button>
+        <button class="dot active" onclick="goScreen(3)"></button>
+      </div>
     </section>
 
     <!-- ONGLET STATISTIQUES -->
-    <section id="viewStats" class="card hidden">
-      <h2>Statistiques en Direct</h2>
-      <p class="subtitle">Suivez les performances de votre vidéo d'essai et de vos campagnes actives.</p>
-
-      <div class="kpi-grid">
-        <div class="kpi"><div id="kpiViews" class="val">0</div><div class="lbl">Vues générées</div></div>
-        <div class="kpi"><div id="kpiLikes" class="val">0</div><div class="lbl">Interactions</div></div>
-        <div class="kpi"><div id="kpiReach" class="val">0</div><div class="lbl">Portée totale</div></div>
+    <section id="tabStats" class="hidden">
+      <h1 class="screen-heading">Statistiques</h1>
+      <div class="kpi-row">
+        <div class="kpi-box"><div id="stViews" class="kpi-num">0</div><div class="kpi-lbl">Vues</div></div>
+        <div class="kpi-box"><div id="stLikes" class="kpi-num">0</div><div class="kpi-lbl">Interactions</div></div>
+        <div class="kpi-box"><div id="stReach" class="kpi-num">0</div><div class="kpi-lbl">Portée</div></div>
       </div>
-
-      <button class="btn-secondary" style="margin-bottom:14px;" onclick="refreshUserData()">Actualiser les statistiques</button>
-      <div id="campaignList"></div>
+      <button class="pill-btn" style="height:42px;font-size:13px;" onclick="syncUser()">Actualiser</button>
+      <div id="stList"></div>
     </section>
 
-    <!-- ONGLET PROFIL & ESPACE ADMIN -->
-    <section id="viewProfile" class="card hidden">
-      <h2>Profil & Administration</h2>
-      <p class="subtitle">Informations de votre compte et validation des paiements.</p>
+    <!-- ONGLET PROFIL & ADMIN -->
+    <section id="tabProfile" class="hidden">
+      <h1 class="screen-heading">Profil</h1>
+      <div id="profileInfo" class="panel-box" style="font-size:13px;line-height:1.6;">Aucun compte connecté.</div>
+      <button class="pill-btn" style="height:42px;font-size:13px;margin-top:12px;" onclick="signOut()">Déconnexion</button>
 
-      <div id="profileSummary" class="info-box">Connectez-vous d'abord pour voir votre profil.</div>
-      <button class="btn-secondary" style="margin-bottom:18px;" onclick="logout()">Se déconnecter</button>
-
-      <div class="info-box">
-        <h3 style="font-size:14px; margin-bottom:8px;">Validation Paiements (Admin)</h3>
-        <label>Code PIN Administrateur</label>
-        <input id="adminPinInput" type="password" placeholder="Entrez le code PIN" />
-        <button class="btn-primary" onclick="loadAdminPayments()">Charger les paiements en attente</button>
-        <div id="adminList" style="margin-top:12px;"></div>
+      <div class="panel-box">
+        <div style="font-weight:700;font-size:14px;margin-bottom:8px;">Validation Paiements (Admin)</div>
+        <input id="adminPin" type="password" placeholder="Code PIN admin" />
+        <button class="coral-pill-btn" style="height:40px;font-size:13px;" onclick="fetchAdminPayments()">Voir les demandes</button>
+        <div id="adminPaymentsBox"></div>
       </div>
     </section>
   </div>
 
-  <nav class="bottom-nav">
-    <button id="navHome" class="nav-item active" onclick="switchTab('home')">Accueil</button>
-    <button id="navStats" class="nav-item" onclick="switchTab('stats')">Statistiques</button>
-    <button id="navProfile" class="nav-item" onclick="switchTab('profile')">Profil</button>
+  <nav class="bottom-bar">
+    <button id="bHome" class="b-btn active" onclick="openNav('home')"><span>🏠</span><span>Accueil</span></button>
+    <button id="bStats" class="b-btn" onclick="openNav('stats')"><span>📊</span><span>Statistiques</span></button>
+    <button id="bProfile" class="b-btn" onclick="openNav('profile')"><span>👤</span><span>Profil</span></button>
   </nav>
 
   <script>
-    let currentUser = JSON.parse(localStorage.getItem("eb_user") || "null");
-    let selectedSocialProvider = "google";
+    let user = JSON.parse(localStorage.getItem("eb_user") || "null");
+    let authMode = "google";
+    let platformVal = "TikTok";
 
-    function updateHeader() {
-      const pill = document.getElementById("userPill");
-      if (currentUser) {
-        pill.textContent = `${currentUser.full_name || currentUser.identifier} (ID #${currentUser.id})`;
-        pill.classList.add("connected");
+    function renderTopTag() {
+      const tag = document.getElementById("userTag");
+      if (user) {
+        tag.textContent = `${user.full_name || user.identifier} (#${user.id})`;
+        tag.classList.add("ok");
       } else {
-        pill.textContent = "Non connecté";
-        pill.classList.remove("connected");
+        tag.textContent = "Non connecté";
+        tag.classList.remove("ok");
       }
     }
 
-    function openSocialForm(provider) {
-      selectedSocialProvider = provider;
-      const box = document.getElementById("socialVerifyBox");
-      const title = document.getElementById("socialTitle");
-      const label = document.getElementById("socialEmailLabel");
-      const input = document.getElementById("socialEmail");
-      box.classList.remove("hidden");
-
-      if (provider === "google") {
-        title.textContent = "Connexion avec votre compte Google";
-        label.textContent = "Adresse Gmail";
-        input.placeholder = "votre.nom@gmail.com";
-      } else {
-        title.textContent = "Connexion avec votre compte iCloud";
-        label.textContent = "Identifiant Apple / iCloud";
-        input.placeholder = "votre.nom@icloud.com";
-      }
+    function openAuthModal(mode) {
+      authMode = mode;
+      document.getElementById("authFormBox").classList.remove("hidden");
+      const isPhone = mode === "phone";
+      document.getElementById("socialFields").classList.toggle("hidden", isPhone);
+      document.getElementById("phoneFields").classList.toggle("hidden", !isPhone);
+      const titles = {
+        google: "Connexion Google",
+        icloud: "Connexion Apple / iCloud",
+        phone: "Connexion par numéro"
+      };
+      document.getElementById("authFormTitle").textContent = titles[mode];
     }
 
-    async function submitSocialAuth() {
-      const full_name = document.getElementById("socialName").value;
-      const identifier = document.getElementById("socialEmail").value;
-      await sendAuth({ provider: selectedSocialProvider, identifier, full_name });
-    }
+    async function submitAuth() {
+      const fb = document.getElementById("authFeedback");
+      fb.innerHTML = "";
+      const payload = authMode === "phone"
+        ? {
+            provider: "phone",
+            identifier: document.getElementById("authPhone").value,
+            password: document.getElementById("authPass").value
+          }
+        : {
+            provider: authMode,
+            full_name: document.getElementById("authName").value,
+            identifier: document.getElementById("authEmail").value
+          };
 
-    async function submitPhoneAuth() {
-      const identifier = document.getElementById("phoneInput").value;
-      const password = document.getElementById("passwordInput").value;
-      await sendAuth({ provider: "phone", identifier, password });
-    }
-
-    async function sendAuth(payload) {
-      const msg = document.getElementById("authMsg");
-      msg.innerHTML = "";
       try {
         const res = await fetch("/api/auth", {
           method: "POST",
@@ -352,220 +516,192 @@
           body: JSON.stringify(payload)
         });
         const data = await res.json();
-        if (!res.ok) throw new Error(data.detail || "Erreur de connexion");
-
-        currentUser = data.user;
-        localStorage.setItem("eb_user", JSON.stringify(currentUser));
-        updateHeader();
-        await refreshUserData();
-        goStep(2);
-      } catch (err) {
-        msg.innerHTML = `<div class="alert error">${err.message}</div>`;
+        if (!res.ok) throw new Error(data.detail || "Erreur d'authentification");
+        user = data.user;
+        localStorage.setItem("eb_user", JSON.stringify(user));
+        renderTopTag();
+        await syncUser();
+        goScreen(2);
+      } catch (e) {
+        fb.innerHTML = `<div class="msg err">${e.message}</div>`;
       }
     }
 
-    function goStep(step) {
-      if (step > 1 && !currentUser) {
-        document.getElementById("authMsg").innerHTML = `<div class="alert warning">Veuillez d'abord renseigner votre compte ou numéro à l'étape 1.</div>`;
-        step = 1;
-      }
-      switchTab("home");
-      [1, 2, 3].forEach(n => {
-        document.getElementById(`viewStep${n}`).classList.toggle("hidden", n !== step);
-        document.getElementById(`step${n}Btn`).classList.toggle("active", n === step);
+    function choosePlatform(name, icon) {
+      platformVal = name;
+      document.getElementById("selectedPlatName").textContent = name;
+      document.getElementById("selectedPlatIcon").textContent = icon;
+      document.querySelectorAll(".plat-chip").forEach(btn => {
+        btn.classList.toggle("selected", btn.textContent.trim() === icon);
       });
     }
 
-    function switchTab(tab) {
-      document.getElementById("stepperBar").classList.toggle("hidden", tab !== "home");
-      document.getElementById("viewStep1").classList.add("hidden");
-      document.getElementById("viewStep2").classList.add("hidden");
-      document.getElementById("viewStep3").classList.add("hidden");
-      document.getElementById("viewStats").classList.toggle("hidden", tab !== "stats");
-      document.getElementById("viewProfile").classList.toggle("hidden", tab !== "profile");
+    function goScreen(num) {
+      if (num > 1 && !user) {
+        document.getElementById("authFeedback").innerHTML = `<div class="msg warn">Veuillez d'abord renseigner votre compte ou numéro.</div>`;
+        num = 1;
+      }
+      openNav("home");
+      [1, 2, 3].forEach(i => document.getElementById(`screen${i}`).classList.toggle("hidden", i !== num));
+    }
 
-      document.getElementById("navHome").classList.toggle("active", tab === "home");
-      document.getElementById("navStats").classList.toggle("active", tab === "stats");
-      document.getElementById("navProfile").classList.toggle("active", tab === "profile");
+    function openNav(tab) {
+      document.getElementById("bHome").classList.toggle("active", tab === "home");
+      document.getElementById("bStats").classList.toggle("active", tab === "stats");
+      document.getElementById("bProfile").classList.toggle("active", tab === "profile");
+
+      ["screen1", "screen2", "screen3", "tabStats", "tabProfile"].forEach(id => {
+        document.getElementById(id).classList.add("hidden");
+      });
 
       if (tab === "home") {
-        const activeStep = currentUser ? 2 : 1;
-        document.getElementById(`viewStep${activeStep}`).classList.remove("hidden");
-      } else if (tab === "stats" && currentUser) {
-        refreshUserData();
+        const target = user ? "screen2" : "screen1";
+        document.getElementById(target).classList.remove("hidden");
+      } else if (tab === "stats") {
+        document.getElementById("tabStats").classList.remove("hidden");
+        syncUser();
+      } else if (tab === "profile") {
+        document.getElementById("tabProfile").classList.remove("hidden");
+        syncUser();
       }
     }
 
-    async function refreshUserData() {
-      if (!currentUser) return;
-      const res = await fetch(`/api/user/${currentUser.id}`);
-      if (!res.ok) return;
-      const data = await res.json();
-      currentUser = data.user;
-      localStorage.setItem("eb_user", JSON.stringify(currentUser));
-      updateHeader();
-
-      document.getElementById("accountLabel").textContent = `${currentUser.identifier} (ID #${currentUser.id})`;
-      document.getElementById("quotaLabel").textContent = currentUser.free_trial_used ? "0 / 1 vidéo (utilisé)" : "1 / 1 vidéo disponible";
-
-      const statusMap = {
-        inactive: "Essai gratuit uniquement",
-        pending: "Paiement en attente de vérification",
-        active: `Actif (${currentUser.plan_type || "Pass"})`,
-        rejected: "Paiement rejeté — vérifiez votre référence"
-      };
-      document.getElementById("subStatusLabel").textContent = statusMap[currentUser.subscription_status] || currentUser.subscription_status;
-
-      document.getElementById("profileSummary").innerHTML = `
-        <div><strong>Nom / Compte :</strong> ${currentUser.full_name || currentUser.identifier}</div>
-        <div><strong>Identifiant :</strong> ${currentUser.identifier}</div>
-        <div><strong>ID Système :</strong> #${currentUser.id}</div>
-        <div><strong>Statut :</strong> ${statusMap[currentUser.subscription_status]}</div>
-      `;
-
-      let totalViews = 0, totalLikes = 0, totalReach = 0;
-      const list = document.getElementById("campaignList");
-      list.innerHTML = "";
-
-      if (data.campaigns.length === 0) {
-        list.innerHTML = `<div class="info-box">Aucune vidéo boostée pour le moment. Lancez votre essai gratuit à l'étape 2.</div>`;
-      } else {
-        data.campaigns.forEach(c => {
-          totalViews += c.views;
-          totalLikes += c.likes;
-          totalReach += c.reach;
-          list.innerHTML += `
-            <div class="campaign-item">
-              <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-                <strong>${c.platform} — ${c.objective}</strong>
-                <span class="badge live">${c.status}</span>
-              </div>
-              <div style="font-size:12px; color:#94a3b8; word-break:break-all; margin-bottom:8px;">${c.video_url}</div>
-              <div style="font-size:13px;">
-                <strong>${c.views.toLocaleString()}</strong> vues •
-                <strong>${c.likes.toLocaleString()}</strong> likes •
-                Engagement <strong>${c.engagement_rate}%</strong>
-              </div>
-            </div>
-          `;
-        });
-      }
-
-      document.getElementById("kpiViews").textContent = totalViews.toLocaleString();
-      document.getElementById("kpiLikes").textContent = totalLikes.toLocaleString();
-      document.getElementById("kpiReach").textContent = totalReach.toLocaleString();
-    }
-
-    async function launchBoost() {
-      const msg = document.getElementById("boostMsg");
-      msg.innerHTML = "";
+    async function runFreeTrial() {
+      const fb = document.getElementById("trialFeedback");
+      fb.innerHTML = "";
       try {
         const res = await fetch("/api/boost", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            user_id: currentUser.id,
-            platform: document.getElementById("platformSelect").value,
-            objective: document.getElementById("objectiveSelect").value,
-            video_url: document.getElementById("videoUrlInput").value
+            user_id: user.id,
+            platform: platformVal,
+            objective: "Vues & Viralité",
+            video_url: document.getElementById("videoLinkInput").value
           })
         });
         const data = await res.json();
-        if (!res.ok) throw new Error(data.detail || "Impossible de lancer le boost");
-
-        await refreshUserData();
-        msg.innerHTML = `<div class="alert success">${data.message}</div>`;
-        setTimeout(() => switchTab("stats"), 900);
-      } catch (err) {
-        msg.innerHTML = `<div class="alert error">${err.message}</div>`;
+        if (!res.ok) throw new Error(data.detail || "Essai indisponible");
+        await syncUser();
+        fb.innerHTML = `<div class="msg ok">${data.message}</div>`;
+      } catch (e) {
+        fb.innerHTML = `<div class="msg err">${e.message}</div>`;
       }
     }
 
-    async function submitPayment() {
-      const msg = document.getElementById("paymentMsg");
-      msg.innerHTML = "";
+    async function sendSubscription() {
+      const fb = document.getElementById("subFeedback");
+      fb.innerHTML = "";
+      const selectedPlan = document.querySelector('input[name="planRadio"]:checked').value;
       try {
         const res = await fetch("/api/subscribe", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            user_id: currentUser.id,
-            plan_type: document.getElementById("planSelect").value,
-            payment_method: document.getElementById("methodSelect").value,
-            transaction_ref: document.getElementById("txRefInput").value
+            user_id: user.id,
+            plan_type: selectedPlan,
+            payment_method: document.getElementById("payMethod").value,
+            transaction_ref: document.getElementById("txRef").value
           })
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.detail || "Erreur d'envoi");
-
-        await refreshUserData();
-        msg.innerHTML = `<div class="alert warning">${data.message}</div>`;
-      } catch (err) {
-        msg.innerHTML = `<div class="alert error">${err.message}</div>`;
+        await syncUser();
+        fb.innerHTML = `<div class="msg warn">${data.message}</div>`;
+      } catch (e) {
+        fb.innerHTML = `<div class="msg err">${e.message}</div>`;
       }
     }
 
-    async function loadAdminPayments() {
-      const pin = document.getElementById("adminPinInput").value;
-      const box = document.getElementById("adminList");
+    async function syncUser() {
+      if (!user) return;
+      const res = await fetch(`/api/user/${user.id}`);
+      if (!res.ok) return;
+      const data = await res.json();
+      user = data.user;
+      localStorage.setItem("eb_user", JSON.stringify(user));
+      renderTopTag();
+
+      const used = user.free_trial_used === 1;
+      document.getElementById("trialQuotaText").textContent = used
+        ? "0 vidéo disponible dans votre essai"
+        : "1 vidéo disponible dans votre essai";
+      document.getElementById("trialPill").textContent = used
+        ? "Essai gratuit déjà utilisé"
+        : "Essai limité à 1 vidéo";
+
+      document.getElementById("profileInfo").innerHTML = `
+        <div><strong>Compte :</strong> ${user.full_name || user.identifier}</div>
+        <div><strong>Identifiant :</strong> ${user.identifier}</div>
+        <div><strong>ID :</strong> #${user.id}</div>
+        <div><strong>Abonnement :</strong> ${user.subscription_status}</div>
+      `;
+
+      let views = 0, likes = 0, reach = 0;
+      const list = document.getElementById("stList");
+      list.innerHTML = "";
+      data.campaigns.forEach(c => {
+        views += c.views; likes += c.likes; reach += c.reach;
+        list.innerHTML += `
+          <div class="camp-card">
+            <div style="font-weight:700;margin-bottom:4px;">${c.platform} • ${c.status}</div>
+            <div style="color:#94a3b8;font-size:12px;word-break:break-all;margin-bottom:6px;">${c.video_url}</div>
+            <div>${c.views.toLocaleString()} vues • ${c.likes.toLocaleString()} likes • ${c.engagement_rate}%</div>
+          </div>
+        `;
+      });
+      document.getElementById("stViews").textContent = views.toLocaleString();
+      document.getElementById("stLikes").textContent = likes.toLocaleString();
+      document.getElementById("stReach").textContent = reach.toLocaleString();
+    }
+
+    async function fetchAdminPayments() {
+      const pin = document.getElementById("adminPin").value;
+      const box = document.getElementById("adminPaymentsBox");
       box.innerHTML = "";
       try {
         const res = await fetch(`/api/admin/payments?admin_pin=${encodeURIComponent(pin)}`);
         const data = await res.json();
-        if (!res.ok) throw new Error(data.detail || "Accès refusé");
-
-        if (data.payments.length === 0) {
-          box.innerHTML = `<div style="font-size:13px; color:#94a3b8;">Aucune demande de paiement enregistrée.</div>`;
-          return;
-        }
-
+        if (!res.ok) throw new Error(data.detail || "PIN invalide");
         data.payments.forEach(p => {
-          const badgeClass = p.status === "approved" ? "live" : p.status === "rejected" ? "rejected" : "pending";
           box.innerHTML += `
-            <div class="campaign-item">
-              <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-                <strong>${p.full_name || p.identifier}</strong>
-                <span class="badge ${badgeClass}">${p.status.toUpperCase()}</span>
-              </div>
-              <div style="font-size:12px; color:#94a3b8; margin-bottom:6px;">
-                ${p.plan_type} • ${p.payment_method} • Réf: <strong>${p.transaction_ref}</strong>
-              </div>
+            <div class="camp-card">
+              <div><strong>${p.full_name || p.identifier}</strong> — ${p.status}</div>
+              <div style="font-size:12px;color:#94a3b8;margin:4px 0;">${p.plan_type} | ${p.payment_method} | ${p.transaction_ref}</div>
               ${p.status === "pending" ? `
-                <div style="display:flex; gap:8px;">
-                  <button class="btn-primary" style="padding:7px; font-size:12px;" onclick="reviewPayment(${p.id}, 'approve')">Approuver</button>
-                  <button class="btn-secondary" style="padding:7px; font-size:12px;" onclick="reviewPayment(${p.id}, 'reject')">Rejeter</button>
+                <div style="display:flex;gap:8px;margin-top:6px;">
+                  <button onclick="decidePayment(${p.id},'approve')" style="flex:1;padding:6px;border:none;border-radius:8px;background:#10b981;color:#052e16;font-weight:700;cursor:pointer;">Approuver</button>
+                  <button onclick="decidePayment(${p.id},'reject')" style="flex:1;padding:6px;border:none;border-radius:8px;background:#ef4444;color:#fff;font-weight:700;cursor:pointer;">Rejeter</button>
                 </div>
               ` : ""}
             </div>
           `;
         });
-      } catch (err) {
-        box.innerHTML = `<div class="alert error">${err.message}</div>`;
+      } catch (e) {
+        box.innerHTML = `<div class="msg err">${e.message}</div>`;
       }
     }
 
-    async function reviewPayment(paymentId, action) {
-      const pin = document.getElementById("adminPinInput").value;
+    async function decidePayment(paymentId, action) {
+      const pin = document.getElementById("adminPin").value;
       await fetch("/api/admin/review", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ admin_pin: pin, payment_id: paymentId, action })
       });
-      await loadAdminPayments();
-      await refreshUserData();
+      await fetchAdminPayments();
+      await syncUser();
     }
 
-    function logout() {
+    function signOut() {
       localStorage.removeItem("eb_user");
-      currentUser = null;
-      updateHeader();
-      goStep(1);
+      user = null;
+      renderTopTag();
+      goScreen(1);
     }
 
-    updateHeader();
-    if (currentUser) {
-      refreshUserData().then(() => goStep(2));
-    }
+    renderTopTag();
+    if (user) syncUser().then(() => goScreen(2));
   </script>
 </body>
 </html>
