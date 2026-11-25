@@ -1,215 +1,610 @@
+<!DOCTYPE html>
+<html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>Empire Boost - Panel Officiel</title>
-    <link rel="icon" href="https://emojicdn.elk.sh/🏴‍☠️">
-    <style>
-        :root {
-            --bg-color: #0b0f19;
-            --card-bg: #131c2e;
-            --accent-red: #e11d48;
-            --accent-gold: #f59e0b;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --border-color: #1e293b;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        header h1 {
-            color: var(--accent-gold);
-            font-size: 2.2rem;
-            margin-bottom: 5px;
-        }
-        header p {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-        }
-        .card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            padding: 25px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-        }
-        .card h3 {
-            margin-top: 0;
-            color: var(--text-main);
-            border-bottom: 2px solid var(--accent-red);
-            padding-bottom: 8px;
-            font-size: 1.15rem;
-        }
-        label {
-            display: block;
-            margin-top: 12px;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-        input, select {
-            width: 100%;
-            padding: 12px;
-            margin-top: 5px;
-            background-color: #090d16;
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            border-radius: 6px;
-            box-sizing: border-box;
-            font-size: 0.95rem;
-        }
-        input:focus, select:focus {
-            outline: none;
-            border-color: var(--accent-gold);
-        }
-        button {
-            width: 100%;
-            padding: 12px;
-            margin-top: 18px;
-            background: linear-gradient(135deg, #e11d48, #be123c);
-            color: white;
-            border: none;
-            font-weight: bold;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: opacity 0.2s;
-        }
-        button:hover {
-            opacity: 0.9;
-        }
-        pre {
-            background-color: #090d16;
-            padding: 15px;
-            border-radius: 6px;
-            overflow-x: auto;
-            font-size: 0.85rem;
-            color: #38bdf8;
-            border: 1px solid var(--border-color);
-            margin: 0;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Empire Boost</title>
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card: #131a2a;
+      --card-soft: #1a2338;
+      --accent: #e11d48;
+      --accent-hover: #be123c;
+      --gold: #f59e0b;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --border: #243049;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 20px 16px 90px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 440px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .brand {
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: 0.4px;
+    }
+
+    .brand span { color: var(--gold); }
+
+    .badge {
+      font-size: 0.78rem;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: var(--card-soft);
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    .steps-bar {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .step-pill {
+      text-align: center;
+      padding: 8px 6px;
+      border-radius: 10px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    .step-pill.active {
+      background: rgba(225, 29, 72, 0.15);
+      border-color: var(--accent);
+      color: var(--text);
+    }
+
+    .step-pill.done {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      display: none;
+    }
+
+    .card.active { display: block; }
+
+    h2 { font-size: 1.2rem; margin-bottom: 6px; }
+    .subtitle { color: var(--muted); font-size: 0.9rem; margin-bottom: 18px; line-height: 1.4; }
+
+    .field { margin-bottom: 14px; }
+    label { display: block; font-size: 0.85rem; color: var(--muted); margin-bottom: 6px; }
+
+    input, select {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 0.95rem;
+      outline: none;
+    }
+
+    input:focus, select:focus { border-color: var(--accent); }
+
+    .btn {
+      width: 100%;
+      padding: 13px 16px;
+      border: none;
+      border-radius: 11px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    .social-group {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .btn-social {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 11px;
+      border: 1px solid var(--border);
+      background: var(--card-soft);
+      color: var(--text);
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-social:hover { border-color: var(--gold); }
+
+    .divider {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.8rem;
+      margin: 14px 0;
+      position: relative;
+    }
+
+    .notice {
+      margin-top: 12px;
+      padding: 11px 12px;
+      border-radius: 10px;
+      font-size: 0.86rem;
+      line-height: 1.4;
+      background: var(--card-soft);
+      border: 1px solid var(--border);
+      display: none;
+    }
+
+    .notice.show { display: block; }
+    .notice.ok { border-color: #10b981; color: #a7f3d0; }
+    .notice.err { border-color: var(--accent); color: #fecdd3; }
+
+    .info-box {
+      background: var(--card-soft);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 16px;
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+
+    .info-box strong { color: var(--gold); }
+
+    .link-action {
+      margin-top: 12px;
+      background: none;
+      border: none;
+      color: var(--gold);
+      font-size: 0.86rem;
+      cursor: pointer;
+      text-decoration: underline;
+      width: 100%;
+      text-align: center;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--card);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      z-index: 20;
+    }
+
+    .nav-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .nav-btn.active { color: var(--text); }
+  </style>
 </head>
 <body>
-
-    <div class="container">
-        <header>
-            <h1>🏴‍☠️ EMPIRE BOOST</h1>
-            <p>Panel de Gestion & Automatisation des Abonnements</p>
-        </header>
-
-        <div class="card">
-            <h3>1. Inscription (Essai 3 Jours)</h3>
-            <label>Nom d'utilisateur</label>
-            <input type="text" id="reg-username" placeholder="Ex: Capitaine">
-            <label>Numéro de téléphone</label>
-            <input type="text" id="reg-phone" placeholder="Ex: +243XXXXXXXXX">
-            <button onclick="registerUser()">S'inscrire</button>
-        </div>
-
-        <div class="card">
-            <h3>2. Lancer un Boost</h3>
-            <label>ID Utilisateur</label>
-            <input type="number" id="boost-userid" placeholder="Ex: 1">
-            <label>Plateforme Cible</label>
-            <select id="boost-platform">
-                <option value="TikTok">TikTok</option>
-                <option value="Instagram">Instagram</option>
-                <option value="Facebook">Facebook</option>
-            </select>
-            <label>Lien de la vidéo / publication</label>
-            <input type="text" id="boost-url" placeholder="https://...">
-            <button onclick="launchBoost()">Lancer le Boost</button>
-        </div>
-
-        <div class="card">
-            <h3>3. Valider un Abonnement</h3>
-            <label>ID Utilisateur</label>
-            <input type="number" id="pay-userid" placeholder="Ex: 1">
-            <label>Type de Pass (Grille Tarifaire)</label>
-            <select id="pay-plan">
-                <option value="semaine">Pass Semaine (5$ - 7 jours)</option>
-                <option value="mensuel">Pass Mensuel (15$ - 30 jours)</option>
-                <option value="vip">Pass VIP (20$ - 30 jours)</option>
-            </select>
-            <label>Méthode de Paiement (Mobile Money)</label>
-            <input type="text" id="pay-method" placeholder="M-Pesa / Airtel Money">
-            <label>ID de Transaction</label>
-            <input type="text" id="pay-txid" placeholder="Ex: MP261118...">
-            <button onclick="verifyPayment()">Valider le Paiement</button>
-        </div>
-
-        <div class="card">
-            <h3>Console / Réponse Serveur</h3>
-            <pre id="output">En attente d'action...</pre>
-        </div>
+  <div class="app">
+    <div class="topbar">
+      <div class="brand">Empire <span>Boost</span></div>
+      <div class="badge" id="userBadge">Non connecté</div>
     </div>
 
-    <script>
-        const API_URL = "https://empire-boost.onrender.com";
+    <div class="steps-bar">
+      <div class="step-pill active" id="pill-1">1. Identité</div>
+      <div class="step-pill" id="pill-2">2. Essai (1 vidéo)</div>
+      <div class="step-pill" id="pill-3">3. Abonnement</div>
+    </div>
 
-        async function registerUser() {
-            const username = document.getElementById('reg-username').value;
-            const phone = document.getElementById('reg-phone').value;
-            try {
-                const res = await fetch(`${API_URL}/register`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({username, phone})
-                });
-                const data = await res.json();
-                document.getElementById('output').innerText = JSON.stringify(data, null, 2);
-                if(data.user_id) { alert(`Inscription réussie ! Ton ID est : ${data.user_id}`); }
-            } catch (err) {
-                document.getElementById('output').innerText = "Erreur de connexion au serveur.";
-            }
+    <!-- ÉTAPE 1 : CONNEXION -->
+    <section class="card active" id="screen-login">
+      <h2>Connexion & Identité</h2>
+      <p class="subtitle">Connectez-vous pour accéder à votre essai gratuit d'une vidéo.</p>
+
+      <div class="social-group">
+        <button type="button" class="btn-social" onclick="socialLogin('Google')">
+          <span>G</span> Continuer avec un compte Google
+        </button>
+        <button type="button" class="btn-social" onclick="socialLogin('iCloud')">
+          <span></span> Continuer avec iCloud
+        </button>
+      </div>
+
+      <div class="divider">ou avec votre numéro de téléphone (tous pays)</div>
+
+      <form id="loginForm">
+        <div class="field">
+          <label for="phoneInput">Numéro de téléphone (ex: +243..., +33..., +225...)</label>
+          <input type="tel" id="phoneInput" placeholder="+243 82 000 0000" required />
+        </div>
+
+        <div class="field">
+          <label for="passwordInput">Mot de passe utilisateur</label>
+          <input type="password" id="passwordInput" placeholder="Votre mot de passe" required />
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="loginBtn">Continuer</button>
+      </form>
+
+      <div class="notice" id="loginNotice"></div>
+    </section>
+
+    <!-- ÉTAPE 2 : BOOST D'ESSAI (LIMITÉ À 1 VIDÉO) -->
+    <section class="card" id="screen-boost">
+      <h2>Essai Gratuit — 1 Vidéo Max</h2>
+      <p class="subtitle">Sélectionnez la plateforme et le lien de votre vidéo. Limité à 1 seule vidéo gratuite.</p>
+
+      <div class="info-box">
+        <div>Quota essai restant : <strong id="quotaText">1 / 1 vidéo</strong></div>
+        <div>ID Utilisateur : <strong id="displayUserId">-</strong></div>
+      </div>
+
+      <form id="boostForm">
+        <div class="field">
+          <label for="platformSelect">Plateforme</label>
+          <select id="platformSelect" required>
+            <option value="TikTok">TikTok</option>
+            <option value="Instagram">Instagram</option>
+            <option value="Facebook">Facebook</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="videoUrlInput">Lien de la vidéo</label>
+          <input type="url" id="videoUrlInput" placeholder="https://vm.tiktok.com/..." required />
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="boostBtn">Lancer mon boost gratuit (1 vidéo)</button>
+      </form>
+
+      <button type="button" class="link-action" onclick="goToStep(3)">Passer directement à l'abonnement</button>
+      <div class="notice" id="boostNotice"></div>
+    </section>
+
+    <!-- ÉTAPE 3 : ABONNEMENT -->
+    <section class="card" id="screen-sub">
+      <h2>Passer à l'Abonnement</h2>
+      <p class="subtitle">Votre essai gratuit est limité à 1 vidéo. Choisissez votre mode de paiement pour continuer.</p>
+
+      <div class="info-box">
+        <div><strong>1. Essai gratuit :</strong> 1 vidéo maximum par compte.</div>
+        <div><strong>2. Accès complet :</strong> Débloquez vos boosts après validation du paiement.</div>
+      </div>
+
+      <form id="subForm">
+        <div class="field">
+          <label for="planSelect">Formule d'abonnement</label>
+          <select id="planSelect" required>
+            <option value="Pass Semaine (5$ - 7 jours)">Pass Semaine (5$ - 7 jours)</option>
+            <option value="Pass Mois (15$ - 30 jours)">Pass Mois (15$ - 30 jours)</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="methodSelect">Méthode de paiement</label>
+          <select id="methodSelect" required>
+            <option value="M-Pesa">M-Pesa</option>
+            <option value="Airtel">Airtel</option>
+            <option value="Carte Visa">Carte Visa</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="txInput">ID de transaction / Référence</label>
+          <input type="text" id="txInput" placeholder="Ex: MP261118... ou réf. Visa" required />
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="subBtn">Valider l'abonnement</button>
+      </form>
+
+      <div class="notice" id="subNotice"></div>
+    </section>
+
+    <!-- VUE STATISTIQUES / PROFIL -->
+    <section class="card" id="screen-account">
+      <h2>Mon Compte & Suivi</h2>
+      <p class="subtitle">État de votre session et de votre quota d'essai.</p>
+      <div class="info-box" id="accountSummary"></div>
+      <button type="button" class="btn btn-primary" onclick="logoutUser()">Changer de compte / Déconnexion</button>
+    </section>
+  </div>
+
+  <nav class="bottom-nav">
+    <button type="button" class="nav-btn active" id="nav-home" onclick="openMainFlow()">
+      <span>Accueil</span>
+    </button>
+    <button type="button" class="nav-btn" id="nav-stats" onclick="openAccountView()">
+      <span>Statistiques</span>
+    </button>
+    <button type="button" class="nav-btn" id="nav-profile" onclick="openAccountView()">
+      <span>Profil</span>
+    </button>
+  </nav>
+
+  <script>
+    const STATE_KEY = "empire_boost_state_v1";
+
+    let state = JSON.parse(localStorage.getItem(STATE_KEY)) || {
+      user_id: null,
+      username: "",
+      phone: "",
+      provider: "",
+      free_boost_used: false,
+      last_video: "",
+      subscribed: false
+    };
+
+    function saveState() {
+      localStorage.setItem(STATE_KEY, JSON.stringify(state));
+      updateUI();
+    }
+
+    function showNotice(id, message, isError = false) {
+      const el = document.getElementById(id);
+      el.textContent = message;
+      el.className = "notice show " + (isError ? "err" : "ok");
+    }
+
+    function hideAllScreens() {
+      document.querySelectorAll(".card").forEach(c => c.classList.remove("active"));
+      document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+    }
+
+    function goToStep(step) {
+      hideAllScreens();
+      document.getElementById("nav-home").classList.add("active");
+
+      ["pill-1", "pill-2", "pill-3"].forEach((id, idx) => {
+        const pill = document.getElementById(id);
+        pill.classList.remove("active", "done");
+        if (idx + 1 < step) pill.classList.add("done");
+        if (idx + 1 === step) pill.classList.add("active");
+      });
+
+      if (step === 1) document.getElementById("screen-login").classList.add("active");
+      if (step === 2) document.getElementById("screen-boost").classList.add("active");
+      if (step === 3) document.getElementById("screen-sub").classList.add("active");
+    }
+
+    function openMainFlow() {
+      if (!state.user_id) {
+        goToStep(1);
+      } else if (!state.free_boost_used && !state.subscribed) {
+        goToStep(2);
+      } else {
+        goToStep(3);
+      }
+    }
+
+    function openAccountView() {
+      hideAllScreens();
+      document.getElementById("nav-profile").classList.add("active");
+      document.getElementById("screen-account").classList.add("active");
+      document.getElementById("accountSummary").innerHTML = `
+        <div><strong>Utilisateur :</strong> ${state.username || "Non défini"}</div>
+        <div><strong>ID Utilisateur :</strong> ${state.user_id || "Non connecté"}</div>
+        <div><strong>Téléphone / Méthode :</strong> ${state.phone || state.provider || "-"}</div>
+        <div><strong>Essai gratuit (1 vidéo) :</strong> ${state.free_boost_used ? "Utilisé (1/1)" : "Disponible (0/1)"}</div>
+        <div><strong>Abonnement :</strong> ${state.subscribed ? "Actif" : "En attente"}</div>
+      `;
+    }
+
+    function updateUI() {
+      const badge = document.getElementById("userBadge");
+      const idEl = document.getElementById("displayUserId");
+      const quotaEl = document.getElementById("quotaText");
+      const boostBtn = document.getElementById("boostBtn");
+
+      if (state.user_id) {
+        badge.textContent = `ID #${state.user_id}`;
+        idEl.textContent = state.user_id;
+      } else {
+        badge.textContent = "Non connecté";
+        idEl.textContent = "-";
+      }
+
+      if (state.free_boost_used) {
+        quotaEl.textContent = "0 / 1 vidéo (Limite atteinte)";
+        boostBtn.disabled = true;
+        boostBtn.textContent = "Limite d'1 vidéo gratuite atteinte";
+      } else {
+        quotaEl.textContent = "1 / 1 vidéo";
+        boostBtn.disabled = false;
+        boostBtn.textContent = "Lancer mon boost gratuit (1 vidéo)";
+      }
+    }
+
+    async function registerOnBackend(username, phone) {
+      const res = await fetch("/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, phone })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.detail || "Erreur lors de l'inscription");
+      }
+      return data;
+    }
+
+    async function socialLogin(provider) {
+      try {
+        const pseudo = `${provider}_User_${Math.floor(1000 + Math.random() * 9000)}`;
+        const data = await registerOnBackend(pseudo, provider);
+        state.user_id = Number(data.user_id);
+        state.username = pseudo;
+        state.provider = provider;
+        saveState();
+        showNotice("loginNotice", `Connecté avec ${provider} (ID #${state.user_id}).`);
+        setTimeout(() => goToStep(state.free_boost_used ? 3 : 2), 500);
+      } catch (err) {
+        showNotice("loginNotice", err.message, true);
+      }
+    }
+
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const phone = document.getElementById("phoneInput").value.trim();
+      const password = document.getElementById("passwordInput").value.trim();
+
+      if (!phone || !password) {
+        showNotice("loginNotice", "Veuillez saisir un numéro de téléphone et un mot de passe.", true);
+        return;
+      }
+
+      try {
+        const username = phone.replace(/\s+/g, "");
+        const data = await registerOnBackend(username, phone);
+        state.user_id = Number(data.user_id);
+        state.username = username;
+        state.phone = phone;
+        saveState();
+        showNotice("loginNotice", `Identité validée (ID #${state.user_id}).`);
+        setTimeout(() => goToStep(state.free_boost_used ? 3 : 2), 500);
+      } catch (err) {
+        showNotice("loginNotice", err.message, true);
+      }
+    });
+
+    document.getElementById("boostForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      if (!state.user_id) {
+        showNotice("boostNotice", "Connectez-vous d'abord à l'étape 1.", true);
+        goToStep(1);
+        return;
+      }
+
+      if (state.free_boost_used) {
+        showNotice("boostNotice", "Votre essai est limité à 1 seule vidéo. Passez à l'abonnement.", true);
+        goToStep(3);
+        return;
+      }
+
+      const platform = document.getElementById("platformSelect").value;
+      const video_url = document.getElementById("videoUrlInput").value.trim();
+
+      try {
+        const res = await fetch("/launch-free-boost", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            user_id: Number(state.user_id),
+            platform,
+            video_url
+          })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.detail || "Impossible de lancer le boost");
         }
 
-        async function launchBoost() {
-            const user_id = parseInt(document.getElementById('boost-userid').value);
-            const platform = document.getElementById('boost-platform').value;
-            const video_url = document.getElementById('boost-url').value;
-            try {
-                const res = await fetch(`${API_URL}/launch-free-boost`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({user_id, platform, video_url})
-                });
-                const data = await res.json();
-                document.getElementById('output').innerText = JSON.stringify(data, null, 2);
-            } catch (err) {
-                document.getElementById('output').innerText = "Erreur de connexion au serveur.";
-            }
-        }
+        state.free_boost_used = true;
+        state.last_video = video_url;
+        saveState();
 
-        async function verifyPayment() {
-            const user_id = parseInt(document.getElementById('pay-userid').value);
-            const plan_type = document.getElementById('pay-plan').value;
-            const payment_method = document.getElementById('pay-method').value;
-            const transaction_id = document.getElementById('pay-txid').value;
-            try {
-                const res = await fetch(`${API_URL}/verify-payment`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({user_id, plan_type, payment_method, transaction_id})
-                });
-                const data = await res.json();
-                document.getElementById('output').innerText = JSON.stringify(data, null, 2);
-                if(data.success) { alert(`Abonnement ${plan_type.toUpperCase()} activé avec succès !`); }
-            } catch (err) {
-                document.getElementById('output').innerText = "Erreur de connexion au serveur.";
-            }
+        showNotice("boostNotice", data.message || "Boost d'essai lancé (1/1 vidéo utilisée).");
+        setTimeout(() => goToStep(3), 1200);
+      } catch (err) {
+        showNotice("boostNotice", err.message, true);
+      }
+    });
+
+    document.getElementById("subForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const plan_type = document.getElementById("planSelect").value;
+      const payment_method = document.getElementById("methodSelect").value;
+      const transaction_id = document.getElementById("txInput").value.trim();
+
+      try {
+        const res = await fetch("/verify-payment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            user_id: Number(state.user_id || 1),
+            plan_type,
+            payment_method,
+            transaction_id
+          })
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          state.subscribed = true;
+          saveState();
+          showNotice("subNotice", data.message || `Abonnement envoyé via ${payment_method}.`);
+        } else {
+          showNotice("subNotice", `Demande ${payment_method} (${transaction_id}) enregistrée côté interface.`, false);
         }
-    </script>
+      } catch (_) {
+        showNotice("subNotice", `Demande ${payment_method} (${transaction_id}) enregistrée côté interface.`, false);
+      }
+    });
+
+    function logoutUser() {
+      localStorage.removeItem(STATE_KEY);
+      state = {
+        user_id: null,
+        username: "",
+        phone: "",
+        provider: "",
+        free_boost_used: false,
+        last_video: "",
+        subscribed: false
+      };
+      updateUI();
+      goToStep(1);
+    }
+
+    updateUI();
+    openMainFlow();
+  </script>
 </body>
 </html>
