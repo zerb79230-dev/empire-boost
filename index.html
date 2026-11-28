@@ -1,707 +1,1906 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Empire Boost</title>
-  <style>
-    :root {
-      --bg: #070a10;
-      --surface: #0d121d;
-      --surface-2: #151c2c;
-      --border: rgba(255, 255, 255, 0.12);
-      --coral: #e56b6f;
-      --coral-hover: #d4595e;
-      --white-pill: #f4f6fa;
-      --text: #f8fafc;
-      --muted: #9aa4b8;
-      --blue: #3b82f6;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body {
-      background: radial-gradient(circle at 50% 0%, #162238 0%, var(--bg) 55%);
-      color: var(--text);
-      min-height: 100vh;
-      padding-bottom: 84px;
-    }
-    .phone-frame {
-      max-width: 430px;
-      margin: 0 auto;
-      min-height: 100vh;
-      padding: 20px 18px 24px;
-    }
-    .top-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 14px;
-      min-height: 28px;
-    }
-    .session-tag {
-      font-size: 11px;
-      color: var(--muted);
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      padding: 4px 10px;
-      border-radius: 999px;
-    }
-    .session-tag.ok { color: #6ee7b7; border-color: rgba(110, 231, 183, 0.35); }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Empire-Boost — Univers Souverain</title>
+    <style>
+        /* ==========================================================================
+           STYLES NATIFS 100% AUTONOMES (ZÉRO DÉPENDANCE EXTERNE / ANTI-ÉCRAN NOIR)
+           ========================================================================== */
+        :root {
+            --bg-main: #09090b;
+            --bg-card: #121216;
+            --bg-elevated: #1c1c22;
+            --border-color: #27272a;
+            --text-primary: #ffffff;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --accent-gold: #f59e0b;
+            --accent-orange: #ea580c;
+            --accent-pink: #ec4899;
+            --accent-purple: #8b5cf6;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+        }
 
-    .brand-center {
-      text-align: center;
-      margin-top: 8px;
-      margin-bottom: 10px;
-    }
-    .crown { font-size: 20px; color: #c7d2fe; display: block; margin-bottom: 4px; }
-    .brand-title { font-size: 28px; font-weight: 700; letter-spacing: -0.4px; color: #ffffff; }
-    .welcome-sub {
-      text-align: center;
-      color: #cbd5e1;
-      font-size: 15px;
-      line-height: 1.45;
-      max-width: 270px;
-      margin: 10px auto 26px;
-    }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-    .pill-btn {
-      width: 100%;
-      height: 50px;
-      border-radius: 999px;
-      border: none;
-      background: var(--white-pill);
-      color: #0b0f17;
-      font-size: 15px;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      cursor: pointer;
-      margin-bottom: 14px;
-      transition: transform 0.12s ease, opacity 0.15s ease;
-    }
-    .pill-btn:active { transform: scale(0.99); }
+        html, body {
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            line-height: 1.4;
+        }
 
-    .coral-pill-btn {
-      width: 100%;
-      height: 46px;
-      border-radius: 999px;
-      border: none;
-      background: var(--coral);
-      color: #ffffff;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      margin-top: 6px;
-      margin-bottom: 14px;
-    }
-    .coral-pill-btn:hover { background: var(--coral-hover); }
+        /* Conteneur principal adaptatif mobile & desktop */
+        .app-shell {
+            width: 100%;
+            max-width: 440px;
+            height: 100dvh;
+            margin: 0 auto;
+            background-color: #000000;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            border-left: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+        }
 
-    .dots {
-      display: flex;
-      justify-content: center;
-      gap: 7px;
-      margin-top: 18px;
-    }
-    .dot {
-      width: 7px; height: 7px; border-radius: 50%;
-      background: #334155; cursor: pointer; border: none;
-    }
-    .dot.active { background: #60a5fa; }
+        /* En-tête fixe supérieur */
+        .top-header {
+            height: 56px;
+            padding: 0 16px;
+            background: rgba(9, 9, 11, 0.95);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+            z-index: 20;
+        }
 
-    .screen-heading {
-      font-size: 25px;
-      font-weight: 700;
-      line-height: 1.22;
-      margin-bottom: 16px;
-      color: #ffffff;
-    }
-    .trial-badge-wrap { text-align: center; margin-bottom: 20px; }
-    .trial-badge {
-      display: inline-block;
-      background: #141b29;
-      border: 1px solid rgba(255,255,255,0.14);
-      color: #e2e8f0;
-      font-size: 13px;
-      padding: 7px 16px;
-      border-radius: 999px;
-    }
+        .brand-logo {
+            font-size: 18px;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+            background: linear-gradient(90deg, #fbbf24, #f97316, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
 
-    .field-label {
-      display: block;
-      font-size: 14px;
-      font-weight: 600;
-      color: #f1f5f9;
-      margin-bottom: 4px;
-    }
-    .field-hint {
-      display: block;
-      font-size: 12px;
-      color: var(--muted);
-      margin-bottom: 8px;
-    }
-    .platform-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: #0c111b;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 10px 12px;
-      margin-bottom: 16px;
-    }
-    .platform-current {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 15px;
-      font-weight: 600;
-    }
-    .platform-icons {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .plat-chip {
-      width: 28px; height: 28px; border-radius: 7px;
-      border: 1px solid var(--border);
-      background: #161f33;
-      color: #fff; font-size: 13px; font-weight: 700;
-      cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
-    }
-    .plat-chip.selected { border-color: var(--coral); background: rgba(229, 107, 111, 0.22); }
+        .sovereign-pill {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 999px;
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.35);
+        }
 
-    input[type="text"], input[type="email"], input[type="tel"], input[type="password"], input[type="url"], select {
-      width: 100%;
-      height: 44px;
-      background: #0b1019;
-      border: 1px solid var(--border);
-      border-radius: 11px;
-      padding: 0 13px;
-      color: #ffffff;
-      font-size: 14px;
-      margin-bottom: 12px;
-      outline: none;
-    }
-    input:focus, select:focus { border-color: #60a5fa; }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-    .trial-footer-note {
-      text-align: center;
-      font-size: 13px;
-      color: #cbd5e1;
-    }
+        .icon-btn {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            border-radius: 12px;
+            padding: 7px 10px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
 
-    /* Écran 3 timeline & carte abonnement */
-    .timeline-row {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      margin-bottom: 14px;
-      position: relative;
-    }
-    .tl-icon {
-      width: 26px; height: 26px; border-radius: 50%;
-      background: rgba(59, 130, 246, 0.18);
-      color: #60a5fa;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 13px; flex-shrink: 0; margin-top: 2px;
-    }
-    .tl-icon.lock { background: rgba(229, 107, 111, 0.2); color: #f87171; }
-    .tl-text { font-size: 14px; line-height: 1.4; color: #e2e8f0; }
+        .icon-btn:active {
+            transform: scale(0.95);
+        }
 
-    .pro-card {
-      background: #0d1320;
-      border: 1px solid rgba(255,255,255,0.14);
-      border-radius: 16px;
-      padding: 16px;
-      margin-top: 10px;
-    }
-    .pro-card h3 { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
-    .pro-sub { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
-    .radio-line {
-      display: flex; align-items: center; gap: 9px;
-      font-size: 14px; color: #f1f5f9; margin-bottom: 8px; cursor: pointer;
-    }
-    .radio-line input { width: auto; height: auto; margin: 0; accent-color: var(--blue); }
+        /* Zone de contenu défilable */
+        .main-viewport {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-bottom: 76px;
+        }
 
-    .pay-badges {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      margin-top: 8px;
-      font-size: 11px;
-      color: #cbd5e1;
-    }
-    .momo-tag {
-      background: #fbbf24; color: #111827; font-weight: 800;
-      padding: 3px 7px; border-radius: 5px; font-size: 10px;
-    }
-    .visa-tag {
-      background: #1e293b; border: 1px solid rgba(255,255,255,0.2);
-      padding: 3px 8px; border-radius: 5px; font-weight: 700;
-    }
+        .main-viewport::-webkit-scrollbar {
+            display: none;
+        }
 
-    .panel-box {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 14px;
-      margin-top: 12px;
-    }
-    .msg {
-      margin-top: 10px; padding: 10px 12px; border-radius: 10px;
-      font-size: 13px; line-height: 1.4;
-    }
-    .msg.ok { background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); color: #6ee7b7; }
-    .msg.warn { background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); color: #fcd34d; }
-    .msg.err { background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #fca5a5; }
+        .tab-panel {
+            display: none;
+            animation: fadeIn 0.2s ease-out;
+        }
 
-    .kpi-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
-    .kpi-box {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 12px; padding: 11px 6px; text-align: center;
-    }
-    .kpi-num { font-size: 17px; font-weight: 700; }
-    .kpi-lbl { font-size: 11px; color: var(--muted); margin-top: 2px; }
+        .tab-panel.active {
+            display: block;
+        }
 
-    .camp-card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 12px; padding: 12px; margin-bottom: 10px; font-size: 13px;
-    }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-    .bottom-bar {
-      position: fixed; bottom: 0; left: 0; right: 0;
-      background: #090d16; border-top: 1px solid var(--border);
-      display: flex; justify-content: space-around; padding: 9px 0;
-    }
-    .b-btn {
-      background: none; border: none; color: #94a3b8;
-      font-size: 11px; display: flex; flex-direction: column; align-items: center; gap: 3px;
-      cursor: pointer;
-    }
-    .b-btn.active { color: #ffffff; font-weight: 600; }
-    .hidden { display: none !important; }
-  </style>
+        /* Barre de navigation inférieure (5 icônes exactes) */
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 66px;
+            background: rgba(9, 9, 11, 0.98);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding-bottom: env(safe-area-inset-bottom, 6px);
+            z-index: 30;
+        }
+
+        .nav-item {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 56px;
+            height: 48px;
+            position: relative;
+            cursor: pointer;
+            transition: color 0.15s;
+        }
+
+        .nav-item.active {
+            color: #ffffff;
+        }
+
+        .nav-item svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .red-dot {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background-color: var(--accent-red);
+            border: 2px solid #000000;
+        }
+
+        /* ==========================================================================
+           COMPOSANTS UI (STORIES, CARTES, BOUTONS, BADGES)
+           ========================================================================== */
+        .vip-grad {
+            background: linear-gradient(135deg, #ec4899, #8b5cf6);
+        }
+        .vvip-grad {
+            background: linear-gradient(135deg, #f59e0b, #ea580c, #dc2626);
+        }
+
+        .section-box {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .section-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Stories 24h */
+        .stories-row {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+        .stories-row::-webkit-scrollbar { display: none; }
+
+        .story-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            flex-shrink: 0;
+            cursor: pointer;
+            width: 64px;
+        }
+
+        .story-ring {
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            padding: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .story-ring.add-own {
+            border: 2px dashed var(--accent-gold);
+        }
+
+        .story-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 16px;
+            color: #fff;
+            border: 2px solid #000;
+        }
+
+        .story-plus {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--accent-gold);
+            color: #000;
+            font-weight: 900;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #000;
+        }
+
+        .story-name {
+            font-size: 11px;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 64px;
+        }
+
+        /* Raccourcis VIP / VVIP */
+        .quick-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            padding: 12px 16px;
+        }
+
+        .quick-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .quick-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+
+        /* Publications Fil d'actualité */
+        .post-card {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .user-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 14px;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .tier-badge {
+            font-size: 9px;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 6px;
+            color: #fff;
+            text-transform: uppercase;
+        }
+
+        .btn-connect {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 6px 12px;
+            border-radius: 999px;
+            cursor: pointer;
+        }
+
+        .post-media {
+            width: 100%;
+            height: 190px;
+            border-radius: 16px;
+            margin: 10px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 16px;
+            border: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .post-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .action-group {
+            display: flex;
+            gap: 16px;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            color: inherit;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Onglet Reels & Live */
+        .reel-stage {
+            height: calc(100dvh - 135px);
+            margin: 10px 14px;
+            border-radius: 24px;
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .live-badge-btn {
+            background: var(--accent-red);
+            color: #fff;
+            border: none;
+            border-radius: 999px;
+            padding: 6px 12px;
+            font-size: 11px;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+
+        .pulse-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #fff;
+            animation: pulse 1.2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.8); }
+        }
+
+        /* Messagerie Empire Chat */
+        .filter-pills {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-top: 8px;
+        }
+
+        .pill-btn {
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 700;
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .pill-btn.active {
+            background: #ffffff;
+            color: #000000;
+            border-color: #ffffff;
+        }
+
+        .chat-row {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+
+        .chat-row:active {
+            background: var(--bg-card);
+        }
+
+        .online-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--accent-green);
+            border: 2px solid #000;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+        }
+
+        /* Fenêtre de conversation ouverte */
+        .chat-room {
+            display: none;
+            flex-direction: column;
+            height: calc(100dvh - 122px);
+        }
+
+        .chat-room.open {
+            display: flex;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .msg-bubble {
+            max-width: 82%;
+            padding: 10px 14px;
+            border-radius: 16px;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .msg-them {
+            background: var(--bg-elevated);
+            color: #fff;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+
+        .msg-me {
+            background: linear-gradient(135deg, #ec4899, #8b5cf6);
+            color: #fff;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .msg-photo {
+            max-width: 100%;
+            border-radius: 10px;
+            margin-top: 6px;
+            display: block;
+            max-height: 180px;
+            object-fit: cover;
+        }
+
+        .msg-reactions {
+            display: flex;
+            gap: 6px;
+            margin-top: 6px;
+            font-size: 11px;
+        }
+
+        .react-chip {
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 999px;
+            padding: 2px 7px;
+            cursor: pointer;
+            color: #fff;
+        }
+
+        .chat-composer {
+            padding: 10px 12px;
+            background: var(--bg-card);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 8px;
+        }
+
+        /* Formulaires & Inputs */
+        .input-field {
+            width: 100%;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 11px 14px;
+            color: #fff;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .input-field:focus {
+            border-color: var(--accent-gold);
+        }
+
+        .primary-btn {
+            width: 100%;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 13px;
+            font-weight: 800;
+            color: #fff;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .link-btn {
+            background: none;
+            border: none;
+            color: var(--accent-gold);
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        /* Dashboard & Barres de progression */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 7px;
+            background: var(--bg-elevated);
+            border-radius: 999px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 999px;
+        }
+
+        /* Modales plein écran / superposition */
+        .modal-overlay {
+            display: none;
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.92);
+            z-index: 50;
+            padding: 18px;
+            overflow-y: auto;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .modal-overlay.open {
+            display: flex;
+        }
+
+        .modal-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 22px;
+            padding: 20px;
+            width: 100%;
+        }
+
+        .pay-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin: 12px 0;
+        }
+
+        .pay-option {
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 10px;
+            text-align: left;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .pay-option.selected {
+            border: 2px solid var(--accent-gold);
+        }
+
+        /* Toast notification */
+        .toast {
+            display: none;
+            position: absolute;
+            top: 64px;
+            left: 16px;
+            right: 16px;
+            background: #18181b;
+            border: 1px solid var(--accent-gold);
+            color: #fff;
+            padding: 12px 14px;
+            border-radius: 14px;
+            font-size: 12px;
+            font-weight: 600;
+            z-index: 60;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+        }
+
+        .toast.show {
+            display: block;
+            animation: fadeIn 0.2s ease-out;
+        }
+    </style>
 </head>
 <body>
-  <div class="phone-frame">
-    <div class="top-bar">
-      <button onclick="goScreen(1)" style="background:none;border:none;color:#94a3b8;font-size:12px;cursor:pointer;">Étapes</button>
-      <div id="userTag" class="session-tag">Non connecté</div>
+
+<div class="app-shell">
+    <!-- EN-TÊTE SOUVERAIN -->
+    <header class="top-header">
+        <div>
+            <div class="brand-logo">EMPIRE-BOOST</div>
+            <span class="sovereign-pill">🛡️ Univers 100% Souverain</span>
+        </div>
+        <div class="header-actions">
+            <button class="icon-btn" onclick="openModal('modal-post')">+ Publier</button>
+            <button class="icon-btn" onclick="openModal('modal-auth')">Inscription</button>
+            <button class="icon-btn" onclick="openPinModal('unlock')" title="Code PIN">🔒</button>
+        </div>
+    </header>
+
+    <!-- NOTIFICATION TOAST -->
+    <div id="toast" class="toast"></div>
+
+    <!-- ZONE PRINCIPALE DES 5 ONGLETS -->
+    <main class="main-viewport">
+
+        <!-- ===============================================================
+             ONGLET 1 : ACCUEIL (VUE D'ENSEMBLE, STORIES 24H, FIL MONDIAL)
+             =============================================================== -->
+        <section id="panel-home" class="tab-panel active">
+            <!-- Stories 24h natives -->
+            <div class="section-box">
+                <div class="section-label">
+                    <span>Stories 24h • En direct du monde</span>
+                    <span style="color: var(--accent-gold); cursor: pointer;" onclick="switchTab('search')">Explorer →</span>
+                </div>
+                <div class="stories-row" id="stories-list"></div>
+            </div>
+
+            <!-- Raccourcis VIP & VVIP -->
+            <div class="quick-grid">
+                <div class="quick-card" onclick="switchTab('profile')">
+                    <div class="quick-icon vip-grad">♥</div>
+                    <div>
+                        <div style="font-size: 12px; font-weight: 800;">Club VIP</div>
+                        <div style="font-size: 10px; color: #f472b6;">Célibataires & Rencontres</div>
+                    </div>
+                </div>
+                <div class="quick-card" onclick="switchTab('profile')">
+                    <div class="quick-icon vvip-grad">⚡</div>
+                    <div>
+                        <div style="font-size: 12px; font-weight: 800;">Boost VVIP</div>
+                        <div style="font-size: 10px; color: #fbbf24;">TikTok • IG • FB • YT</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fil d'actualité mondial -->
+            <div id="feed-list"></div>
+        </section>
+
+        <!-- ===============================================================
+             ONGLET 2 : VIDÉOS COURTES (REELS) & LIVE SOUVERAIN
+             =============================================================== -->
+        <section id="panel-reels" class="tab-panel">
+            <div id="reel-container" class="reel-stage" style="background: linear-gradient(160deg, #1e1b4b 0%, #31102f 50%, #09090b 100%);">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-weight: 800; font-size: 15px;">Empire Reels</span>
+                    <button class="live-badge-btn" onclick="showToast('🔴 Direct vidéo lancé sur tes serveurs souverains Empire-Boost !')">
+                        <span class="pulse-dot"></span> LANCER UN LIVE
+                    </button>
+                </div>
+
+                <div style="text-align: center; padding: 20px 0;">
+                    <div style="width: 68px; height: 68px; border-radius: 50%; background: rgba(255,255,255,0.12); margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; font-size: 26px;">▶</div>
+                    <h3 id="reel-title" style="font-size: 16px; font-weight: 800; margin-bottom: 6px;">Explosion de vues TikTok & Instagram</h3>
+                    <p id="reel-desc" style="font-size: 12px; color: #d4d4d8;">Sarah K. • Kinshasa 🇨🇩 • 148 200 vues propulsées via le pack VVIP.</p>
+                </div>
+
+                <div>
+                    <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+                        <button class="primary-btn vvip-grad" onclick="triggerBoost('Vidéo Reel actuelle')">⚡ Booster cette vidéo (VVIP)</button>
+                        <button class="icon-btn" style="padding: 0 14px;" onclick="nextReel()">Suivante ↓</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===============================================================
+             ONGLET 3 : MESSAGERIE PRIVÉE (EMPIRE CHAT & ESPACE VIP)
+             =============================================================== -->
+        <section id="panel-messages" class="tab-panel">
+            <div id="chat-inbox">
+                <div class="section-box">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h2 style="font-size: 15px; font-weight: 800;">Empire Chat • Direct</h2>
+                            <span style="font-size: 10px; color: #34d399;">🔒 Messagerie interne 100% indépendante</span>
+                        </div>
+                        <span id="unread-counter" style="font-size: 11px; color: #f87171; font-weight: 700;">2 non lus</span>
+                    </div>
+                    <div class="filter-pills">
+                        <button class="pill-btn active" id="filter-chat-all" onclick="filterChats(false)">Toutes les discussions</button>
+                        <button class="pill-btn" id="filter-chat-vip" onclick="filterChats(true)" style="color: #f472b6;">♥ Espace Célibataires VIP</button>
+                    </div>
+                </div>
+                <div id="chats-list"></div>
+            </div>
+
+            <!-- Salle de discussion active -->
+            <div id="chat-room" class="chat-room">
+                <div class="section-box" style="display: flex; align-items: center; justify-content: space-between; background: var(--bg-card);">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <button class="icon-btn" onclick="closeChatRoom()">←</button>
+                        <div>
+                            <div id="room-name" style="font-size: 13px; font-weight: 800;">Membre</div>
+                            <div id="room-status" style="font-size: 10px; color: #34d399;">● En ligne maintenant</div>
+                        </div>
+                    </div>
+                    <span id="room-badge" class="tier-badge vip-grad">VIP</span>
+                </div>
+
+                <div id="room-messages" class="chat-messages"></div>
+
+                <div style="padding: 6px 14px; background: var(--bg-main); border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-size: 12px;">
+                    <div>
+                        <span style="cursor: pointer; margin-right: 8px;" onclick="sendEmoji('❤️')">❤️</span>
+                        <span style="cursor: pointer; margin-right: 8px;" onclick="sendEmoji('🔥')">🔥</span>
+                        <span style="cursor: pointer; margin-right: 8px;" onclick="sendEmoji('😍')">😍</span>
+                        <span style="cursor: pointer;" onclick="sendEmoji('🚀')">🚀</span>
+                    </div>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <label style="color: #60a5fa; font-weight: 700; cursor: pointer;">
+                            📷 Photo
+                            <input type="file" id="chat-photo-input" accept="image/*" style="display: none;" onchange="sendPhotoMessage(event)">
+                        </label>
+                        <span style="color: var(--accent-gold); font-weight: 700; cursor: pointer;" onclick="sendVoiceNote()">🎙️ Note vocale</span>
+                    </div>
+                </div>
+
+                <form class="chat-composer" onsubmit="sendMessage(event)">
+                    <input type="text" id="msg-input" class="input-field" oninput="showTyping()" placeholder="Écrire un message privé...">
+                    <button type="submit" class="icon-btn vip-grad" style="border: none; padding: 0 16px;">Envoyer</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- ===============================================================
+             ONGLET 4 : RECHERCHE MONDIALE & ÉCHANGE MULTI-PLATEFORMES
+             =============================================================== -->
+        <section id="panel-search" class="tab-panel">
+            <div class="section-box">
+                <h2 style="font-size: 15px; font-weight: 800; margin-bottom: 10px;">Recherche Mondiale & Croissance</h2>
+                <input type="text" id="search-query" class="input-field" onkeyup="renderMembers()" placeholder="Chercher un membre, pays (RDC, France, Dubaï)...">
+                <div class="filter-pills">
+                    <button class="pill-btn active" onclick="setMemberFilter('all', this)">Monde entier</button>
+                    <button class="pill-btn" onclick="setMemberFilter('afrique', this)">🌍 Kinshasa / Afrique</button>
+                    <button class="pill-btn" onclick="setMemberFilter('vip', this)">♥ Célibataires VIP</button>
+                    <button class="pill-btn" onclick="setMemberFilter('vvip', this)">⚡ Créateurs VVIP</button>
+                </div>
+            </div>
+
+            <!-- Échange d'abonnés Multi-Plateformes (Étape 2) -->
+            <div class="section-box">
+                <div class="section-label">
+                    <span style="color: var(--accent-gold);">Échange Multi-Plateformes</span>
+                    <span style="color: #34d399;">+25 abonnés / action</span>
+                </div>
+                <div class="pay-grid" style="margin: 0;">
+                    <button class="pay-option" onclick="boostNetwork('tiktok', 'TikTok')">
+                        <div style="font-size: 12px; font-weight: 800;">🎵 TikTok</div>
+                        <div style="font-size: 10px; color: var(--text-secondary);">Gagner des abonnés</div>
+                    </button>
+                    <button class="pay-option" onclick="boostNetwork('instagram', 'Instagram')">
+                        <div style="font-size: 12px; font-weight: 800;">📸 Instagram</div>
+                        <div style="font-size: 10px; color: var(--text-secondary);">Gagner des abonnés</div>
+                    </button>
+                    <button class="pay-option" onclick="boostNetwork('facebook', 'Facebook')">
+                        <div style="font-size: 12px; font-weight: 800;">📘 Facebook</div>
+                        <div style="font-size: 10px; color: var(--text-secondary);">Obtenir des amis</div>
+                    </button>
+                    <button class="pay-option" onclick="boostNetwork('youtube', 'YouTube')">
+                        <div style="font-size: 12px; font-weight: 800;">▶️ YouTube</div>
+                        <div style="font-size: 10px; color: var(--text-secondary);">Gagner des abonnés</div>
+                    </button>
+                </div>
+            </div>
+
+            <div id="members-list"></div>
+        </section>
+
+        <!-- ===============================================================
+             ONGLET 5 : PROFIL, TABLEAU DE BORD & ABONNEMENTS VIP / VVIP
+             =============================================================== -->
+        <section id="panel-profile" class="tab-panel">
+            <div class="section-box">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div class="avatar-circle vvip-grad" style="width: 56px; height: 56px; font-size: 20px;" id="prof-initials">KM</div>
+                    <div style="flex: 1;">
+                        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                            <h2 id="prof-name" style="font-size: 16px; font-weight: 800;">Kabongo Mbuyi</h2>
+                            <span id="prof-tier" class="tier-badge" style="background: var(--bg-elevated); border: 1px solid var(--border-color);">GRATUIT</span>
+                        </div>
+                        <div id="prof-address" style="font-size: 11px; color: var(--text-secondary); margin-top: 3px;">📍 Av. de la Libération, Gombe • Kinshasa</div>
+                        <div id="prof-phone" style="font-size: 11px; color: var(--text-muted);">📱 +243 812 345 678</div>
+                    </div>
+                </div>
+
+                <div class="stat-grid">
+                    <div>
+                        <div id="stat-friends" style="font-size: 16px; font-weight: 900;">142</div>
+                        <div style="font-size: 10px; color: var(--text-secondary);">Relations</div>
+                    </div>
+                    <div>
+                        <div id="stat-visits" style="font-size: 16px; font-weight: 900; color: #34d399;">1 284</div>
+                        <div style="font-size: 10px; color: var(--text-secondary);">Visites profil</div>
+                    </div>
+                    <div>
+                        <div id="stat-total" style="font-size: 16px; font-weight: 900; color: #fbbf24;">3 450</div>
+                        <div style="font-size: 10px; color: var(--text-secondary);">Abonnés gagnés</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tableau de bord trafic multi-plateformes -->
+            <div class="section-box">
+                <div class="section-label">
+                    <span>Tableau de bord & Trafic</span>
+                    <span style="color: #34d399;">+18.4% cette semaine</span>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 10px; font-size: 12px;">
+                    <div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>🎵 TikTok (<strong id="cnt-tiktok">1420</strong> abonnés)</span>
+                            <span style="color: #fbbf24;">78%</span>
+                        </div>
+                        <div class="progress-track"><div class="progress-fill vvip-grad" style="width: 78%;"></div></div>
+                    </div>
+                    <div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>📸 Instagram (<strong id="cnt-instagram">980</strong> abonnés)</span>
+                            <span style="color: #f472b6;">62%</span>
+                        </div>
+                        <div class="progress-track"><div class="progress-fill vip-grad" style="width: 62%;"></div></div>
+                    </div>
+                    <div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>📘 Facebook (<strong id="cnt-facebook">650</strong> amis/abonnés)</span>
+                            <span style="color: #60a5fa;">45%</span>
+                        </div>
+                        <div class="progress-track"><div class="progress-fill" style="width: 45%; background: #3b82f6;"></div></div>
+                    </div>
+                    <div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>▶️ YouTube (<strong id="cnt-youtube">400</strong> abonnés)</span>
+                            <span style="color: #f87171;">34%</span>
+                        </div>
+                        <div class="progress-track"><div class="progress-fill" style="width: 34%; background: #ef4444;"></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ÉTAPE 3 : ABONNEMENTS VIP & VVIP -->
+            <div class="section-box" style="display: flex; flex-direction: column; gap: 12px;">
+                <div class="section-label"><span>Abonnements Exclusifs</span></div>
+
+                <!-- Carte VIP -->
+                <div style="background: var(--bg-card); border: 1px solid rgba(236, 72, 153, 0.45); border-radius: 16px; padding: 14px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <span class="tier-badge vip-grad">1. ABONNEMENT VIP</span>
+                        <span style="font-size: 16px; font-weight: 900;">9 $ <small style="font-size: 10px; color: var(--text-secondary);">/ mois</small></span>
+                    </div>
+                    <div style="font-size: 13px; font-weight: 800; margin-bottom: 4px;">Communauté Célibataires & Rencontres</div>
+                    <p style="font-size: 11px; color: var(--text-secondary); margin-bottom: 12px;">
+                        Intègre l'espace privé des célibataires : discussions privées illimitées, rencontres mondiales et mise en avant de ton profil.
+                    </p>
+                    <button class="primary-btn vip-grad" onclick="openPayModal('VIP', '9 $')">Activer l'accès VIP</button>
+                </div>
+
+                <!-- Carte VVIP -->
+                <div style="background: var(--bg-card); border: 1px solid rgba(245, 158, 11, 0.5); border-radius: 16px; padding: 14px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <span class="tier-badge vvip-grad">2. ABONNEMENT VVIP</span>
+                        <span style="font-size: 16px; font-weight: 900;">15 $ <small style="font-size: 10px; color: var(--text-secondary);">/ mois</small></span>
+                    </div>
+                    <div style="font-size: 13px; font-weight: 800; margin-bottom: 4px;">Boost Massif Comptes & Vidéos</div>
+                    <p style="font-size: 11px; color: var(--text-secondary); margin-bottom: 12px;">
+                        Propulse tes comptes et vidéos sur <strong>TikTok, Facebook, Instagram et YouTube</strong> (vues, abonnés réels, likes) + accès VIP inclus.
+                    </p>
+                    <button class="primary-btn vvip-grad" onclick="openPayModal('VVIP', '15 $')">Activer le Pack VVIP</button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ===================================================================
+         BARRE DE NAVIGATION INFÉRIEURE (EXACTEMENT TES 5 ICÔNES)
+         =================================================================== -->
+    <nav class="bottom-nav">
+        <!-- 1. Accueil (Maison) -->
+        <button class="nav-item active" id="nav-home" onclick="switchTab('home')" aria-label="Accueil">
+            <svg fill="currentColor" viewBox="0 0 24 24"><path d="M11.47 3.84a.75.75 0 011.06 0l8.69 8.69a.75.75 0 101.06-1.06l-8.689-8.69a2.25 2.25 0 00-3.182 0l-8.69 8.69a.75.75 0 001.061 1.06l8.69-8.69z"/><path d="M12 5.432l8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 01-.75-.75v-4.5a.75.75 0 00-.75-.75h-3a.75.75 0 00-.75.75V21a.75.75 0 01-.75.75H5.625a1.875 1.875 0 01-1.875-1.875v-6.198a2.29 2.29 0 00.091-.086L12 5.43z"/></svg>
+        </button>
+
+        <!-- 2. Vidéos / Reels (Play) -->
+        <button class="nav-item" id="nav-reels" onclick="switchTab('reels')" aria-label="Vidéos">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><path fill="currentColor" stroke="none" d="M10 8.5l6 3.5-6 3.5v-7z"/></svg>
+        </button>
+
+        <!-- 3. Messages (Avion en papier + pastille rouge) -->
+        <button class="nav-item" id="nav-messages" onclick="switchTab('messages')" aria-label="Messages">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"/></svg>
+            <span class="red-dot" id="dot-messages"></span>
+        </button>
+
+        <!-- 4. Recherche (Loupe) -->
+        <button class="nav-item" id="nav-search" onclick="switchTab('search')" aria-label="Recherche">
+            <svg fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>
+        </button>
+
+        <!-- 5. Profil (Utilisateur + pastille rouge) -->
+        <button class="nav-item" id="nav-profile" onclick="switchTab('profile')" aria-label="Profil">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            <span class="red-dot" id="dot-profile"></span>
+        </button>
+    </nav>
+
+    <!-- ===================================================================
+         MODALE 1 : INSCRIPTION SOUVERAINE & SÉCURITÉ MOT DE PASSE
+         =================================================================== -->
+    <div id="modal-auth" class="modal-overlay">
+        <div class="modal-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <div>
+                    <div class="brand-logo" style="font-size: 16px;">EMPIRE-BOOST</div>
+                    <div style="font-size: 10px; color: #34d399;">Serveurs & Données 100% Souverains</div>
+                </div>
+                <button class="icon-btn" onclick="closeModal('modal-auth')">✕</button>
+            </div>
+
+            <!-- Connexion rapide 1 clic -->
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 12px;">
+                <button class="icon-btn" style="justify-content: center; border-color: var(--accent-gold); color: #fbbf24;" onclick="quickLogin('Empire ID')">👑 Empire ID</button>
+                <button class="icon-btn" style="justify-content: center;" onclick="quickLogin('Google')">Google</button>
+                <button class="icon-btn" style="justify-content: center;" onclick="quickLogin('iCloud')">iCloud</button>
+            </div>
+
+            <form onsubmit="submitRegistration(event)" style="display: flex; flex-direction: column; gap: 8px;">
+                <input type="text" id="in-nom" class="input-field" placeholder="Nom complet *" value="Kabongo" required>
+                <input type="text" id="in-postnom" class="input-field" placeholder="Post-nom *" value="Mbuyi" required>
+                <input type="date" id="in-dob" class="input-field" value="1999-05-14" required>
+                <input type="text" id="in-avenue" class="input-field" placeholder="Nom de l'avenue & Quartier *" value="Av. de la Libération, Gombe" required>
+                <input type="tel" id="in-phone" class="input-field" placeholder="Numéro de téléphone *" value="+243 812 345 678" required>
+                <input type="password" id="in-password" class="input-field" placeholder="Mot de passe (min. 6 caractères) *" value="Empire2026" minlength="6" required>
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 2px 2px;">
+                    <button type="button" class="link-btn" onclick="closeModal('modal-auth'); openModal('modal-forgot')">Mot de passe oublié ?</button>
+                    <button type="button" class="link-btn" onclick="closeModal('modal-auth'); openPinModal('set')">Configurer PIN (4 chiffres)</button>
+                </div>
+                <button type="submit" class="primary-btn vvip-grad" style="margin-top: 4px;">Créer mon compte et entrer</button>
+            </form>
+        </div>
     </div>
 
-    <!-- ÉCRAN 1 : CONNEXION -->
-    <section id="screen1">
-      <div class="brand-center">
-        <span class="crown">♛</span>
-        <div class="brand-title">Empire Boost</div>
-      </div>
-      <p class="welcome-sub">Bienvenue ! Commençons par créer votre compte.</p>
-
-      <button class="pill-btn" onclick="openAuthModal('google')">
-        <span style="color:#ea4335;font-weight:800;">G</span> Se connecter avec Google
-      </button>
-      <button class="pill-btn" onclick="openAuthModal('icloud')">
-        <span></span> Se connecter avec Apple
-      </button>
-      <button class="pill-btn" onclick="openAuthModal('phone')">
-        <span>📞</span> Continuer avec un numéro de téléphone
-      </button>
-
-      <div id="authFormBox" class="panel-box hidden">
-        <div id="authFormTitle" style="font-weight:700;margin-bottom:10px;font-size:14px;">Identification</div>
-        <div id="socialFields">
-          <label class="field-hint">Nom complet</label>
-          <input id="authName" type="text" placeholder="Ex: Glodi Mwetome" />
-          <label class="field-hint">Adresse e-mail</label>
-          <input id="authEmail" type="email" placeholder="exemple@gmail.com" />
-        </div>
-        <div id="phoneFields" class="hidden">
-          <label class="field-hint">Numéro international (ex: +243...)</label>
-          <input id="authPhone" type="tel" placeholder="+243 82 000 0000" />
-          <label class="field-hint">Mot de passe</label>
-          <input id="authPass" type="password" placeholder="Votre mot de passe" />
-        </div>
-        <button class="coral-pill-btn" style="margin-bottom:4px;" onclick="submitAuth()">Valider et continuer</button>
-      </div>
-      <div id="authFeedback"></div>
-
-      <div class="dots">
-        <button class="dot active" onclick="goScreen(1)"></button>
-        <button class="dot" onclick="goScreen(2)"></button>
-        <button class="dot" onclick="goScreen(3)"></button>
-      </div>
-    </section>
-
-    <!-- ÉCRAN 2 : ESSAI GRATUIT 1 VIDÉO -->
-    <section id="screen2" class="hidden">
-      <h1 class="screen-heading">Étape 2 : Lancez votre Boost (Essai Gratuit)</h1>
-      <div class="trial-badge-wrap">
-        <span id="trialPill" class="trial-badge">Essai limité à 1 vidéo</span>
-      </div>
-
-      <span class="field-label">Sélectionner la plateforme</span>
-      <span class="field-hint">(Onampe sssossible)</span>
-      <div class="platform-bar">
-        <div class="platform-current">
-          <span id="selectedPlatIcon">♪</span>
-          <span id="selectedPlatName">TikTok</span>
-        </div>
-        <div class="platform-icons">
-          <button type="button" class="plat-chip" onclick="choosePlatform('Facebook', 'f')" title="Facebook">f</button>
-          <button type="button" class="plat-chip" onclick="choosePlatform('Instagram', '◎')" title="Instagram">◎</button>
-          <button type="button" class="plat-chip selected" onclick="choosePlatform('TikTok', '♪')" title="TikTok">♪</button>
-        </div>
-      </div>
-
-      <span class="field-label">Lien de la vidéo / publication</span>
-      <input id="videoLinkInput" type="url" placeholder="ex : https://..." />
-
-      <button class="coral-pill-btn" onclick="runFreeTrial()">Lancer le Boost (Gratuit)</button>
-      <div id="trialQuotaText" class="trial-footer-note">1 vidéo disponible dans votre essai</div>
-      <div id="trialFeedback"></div>
-
-      <div style="margin-top:14px;text-align:center;">
-        <button onclick="goScreen(3)" style="background:none;border:none;color:#93c5fd;font-size:13px;cursor:pointer;text-decoration:underline;">
-          Aller à l'Étape 3 : Abonnement
-        </button>
-      </div>
-
-      <div class="dots">
-        <button class="dot" onclick="goScreen(1)"></button>
-        <button class="dot active" onclick="goScreen(2)"></button>
-        <button class="dot" onclick="goScreen(3)"></button>
-      </div>
-    </section>
-
-    <!-- ÉCRAN 3 : ABONNEMENT -->
-    <section id="screen3" class="hidden">
-      <h1 class="screen-heading">Étape 3 : Valider un Abonnement</h1>
-
-      <div class="timeline-row">
-        <div class="tl-icon">🚀</div>
-        <div class="tl-text">Aujourd'hui - Votre 1er boost gratuit est lancé !</div>
-      </div>
-      <div class="timeline-row">
-        <div class="tl-icon lock">🔒</div>
-        <div class="tl-text">Pour continuer à booster vos vidéos, passez au niveau supérieur</div>
-      </div>
-
-      <div class="pro-card">
-        <h3>Abonnement Empire Pro</h3>
-        <div class="pro-sub">Accès illimité pour seulement</div>
-
-        <label class="radio-line">
-          <input type="radio" name="planRadio" value="Pass Semaine (5$ - 7 jours)" checked />
-          <span>5$ / semaine</span>
-        </label>
-        <label class="radio-line">
-          <input type="radio" name="planRadio" value="Pass Mois (15$ - 30 jours)" />
-          <span>Niveau supérieur (15$ / mois)</span>
-        </label>
-
-        <div style="margin-top:12px;">
-          <label class="field-hint">Mode de paiement</label>
-          <select id="payMethod">
-            <option value="M-Pesa">Mobile Money — M-Pesa</option>
-            <option value="Airtel">Mobile Money — Airtel</option>
-            <option value="Carte Visa">Carte Bancaire / Visa</option>
-          </select>
-
-          <label class="field-hint">Référence de transaction</label>
-          <input id="txRef" type="text" placeholder="Ex: MP261125.1708.D75976" />
-        </div>
-
-        <button class="pill-btn" style="height:44px;margin-bottom:8px;font-size:14px;" onclick="sendSubscription()">
-          S'abonner & Débloquer les Boosts
-        </button>
-
-        <div class="pay-badges">
-          <span class="momo-tag">Mobile Money</span>
-          <span class="visa-tag">💳 Carte</span>
-        </div>
-      </div>
-      <div id="subFeedback"></div>
-
-      <div class="dots">
-        <button class="dot" onclick="goScreen(1)"></button>
-        <button class="dot" onclick="goScreen(2)"></button>
-        <button class="dot active" onclick="goScreen(3)"></button>
-      </div>
-    </section>
-
-    <!-- ONGLET STATISTIQUES -->
-    <section id="tabStats" class="hidden">
-      <h1 class="screen-heading">Statistiques</h1>
-      <div class="kpi-row">
-        <div class="kpi-box"><div id="stViews" class="kpi-num">0</div><div class="kpi-lbl">Vues</div></div>
-        <div class="kpi-box"><div id="stLikes" class="kpi-num">0</div><div class="kpi-lbl">Interactions</div></div>
-        <div class="kpi-box"><div id="stReach" class="kpi-num">0</div><div class="kpi-lbl">Portée</div></div>
-      </div>
-      <button class="pill-btn" style="height:42px;font-size:13px;" onclick="syncUser()">Actualiser</button>
-      <div id="stList"></div>
-    </section>
-
-    <!-- ONGLET PROFIL & ADMIN -->
-    <section id="tabProfile" class="hidden">
-      <h1 class="screen-heading">Profil</h1>
-      <div id="profileInfo" class="panel-box" style="font-size:13px;line-height:1.6;">Aucun compte connecté.</div>
-      <button class="pill-btn" style="height:42px;font-size:13px;margin-top:12px;" onclick="signOut()">Déconnexion</button>
-
-      <div class="panel-box">
-        <div style="font-weight:700;font-size:14px;margin-bottom:8px;">Validation Paiements (Admin)</div>
-        <input id="adminPin" type="password" placeholder="Code PIN admin" />
-        <button class="coral-pill-btn" style="height:40px;font-size:13px;" onclick="fetchAdminPayments()">Voir les demandes</button>
-        <div id="adminPaymentsBox"></div>
-      </div>
-    </section>
-  </div>
-
-  <nav class="bottom-bar">
-    <button id="bHome" class="b-btn active" onclick="openNav('home')"><span>🏠</span><span>Accueil</span></button>
-    <button id="bStats" class="b-btn" onclick="openNav('stats')"><span>📊</span><span>Statistiques</span></button>
-    <button id="bProfile" class="b-btn" onclick="openNav('profile')"><span>👤</span><span>Profil</span></button>
-  </nav>
-
-  <script>
-    let user = JSON.parse(localStorage.getItem("eb_user") || "null");
-    let authMode = "google";
-    let platformVal = "TikTok";
-
-    function renderTopTag() {
-      const tag = document.getElementById("userTag");
-      if (user) {
-        tag.textContent = `${user.full_name || user.identifier} (#${user.id})`;
-        tag.classList.add("ok");
-      } else {
-        tag.textContent = "Non connecté";
-        tag.classList.remove("ok");
-      }
-    }
-
-    function openAuthModal(mode) {
-      authMode = mode;
-      document.getElementById("authFormBox").classList.remove("hidden");
-      const isPhone = mode === "phone";
-      document.getElementById("socialFields").classList.toggle("hidden", isPhone);
-      document.getElementById("phoneFields").classList.toggle("hidden", !isPhone);
-      const titles = {
-        google: "Connexion Google",
-        icloud: "Connexion Apple / iCloud",
-        phone: "Connexion par numéro"
-      };
-      document.getElementById("authFormTitle").textContent = titles[mode];
-    }
-
-    async function submitAuth() {
-      const fb = document.getElementById("authFeedback");
-      fb.innerHTML = "";
-      const payload = authMode === "phone"
-        ? {
-            provider: "phone",
-            identifier: document.getElementById("authPhone").value,
-            password: document.getElementById("authPass").value
-          }
-        : {
-            provider: authMode,
-            full_name: document.getElementById("authName").value,
-            identifier: document.getElementById("authEmail").value
-          };
-
-      try {
-        const res = await fetch("/api/auth", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.detail || "Erreur d'authentification");
-        user = data.user;
-        localStorage.setItem("eb_user", JSON.stringify(user));
-        renderTopTag();
-        await syncUser();
-        goScreen(2);
-      } catch (e) {
-        fb.innerHTML = `<div class="msg err">${e.message}</div>`;
-      }
-    }
-
-    function choosePlatform(name, icon) {
-      platformVal = name;
-      document.getElementById("selectedPlatName").textContent = name;
-      document.getElementById("selectedPlatIcon").textContent = icon;
-      document.querySelectorAll(".plat-chip").forEach(btn => {
-        btn.classList.toggle("selected", btn.textContent.trim() === icon);
-      });
-    }
-
-    function goScreen(num) {
-      if (num > 1 && !user) {
-        document.getElementById("authFeedback").innerHTML = `<div class="msg warn">Veuillez d'abord renseigner votre compte ou numéro.</div>`;
-        num = 1;
-      }
-      openNav("home");
-      [1, 2, 3].forEach(i => document.getElementById(`screen${i}`).classList.toggle("hidden", i !== num));
-    }
-
-    function openNav(tab) {
-      document.getElementById("bHome").classList.toggle("active", tab === "home");
-      document.getElementById("bStats").classList.toggle("active", tab === "stats");
-      document.getElementById("bProfile").classList.toggle("active", tab === "profile");
-
-      ["screen1", "screen2", "screen3", "tabStats", "tabProfile"].forEach(id => {
-        document.getElementById(id).classList.add("hidden");
-      });
-
-      if (tab === "home") {
-        const target = user ? "screen2" : "screen1";
-        document.getElementById(target).classList.remove("hidden");
-      } else if (tab === "stats") {
-        document.getElementById("tabStats").classList.remove("hidden");
-        syncUser();
-      } else if (tab === "profile") {
-        document.getElementById("tabProfile").classList.remove("hidden");
-        syncUser();
-      }
-    }
-
-    async function runFreeTrial() {
-      const fb = document.getElementById("trialFeedback");
-      fb.innerHTML = "";
-      try {
-        const res = await fetch("/api/boost", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            user_id: user.id,
-            platform: platformVal,
-            objective: "Vues & Viralité",
-            video_url: document.getElementById("videoLinkInput").value
-          })
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.detail || "Essai indisponible");
-        await syncUser();
-        fb.innerHTML = `<div class="msg ok">${data.message}</div>`;
-      } catch (e) {
-        fb.innerHTML = `<div class="msg err">${e.message}</div>`;
-      }
-    }
-
-    async function sendSubscription() {
-      const fb = document.getElementById("subFeedback");
-      fb.innerHTML = "";
-      const selectedPlan = document.querySelector('input[name="planRadio"]:checked').value;
-      try {
-        const res = await fetch("/api/subscribe", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            user_id: user.id,
-            plan_type: selectedPlan,
-            payment_method: document.getElementById("payMethod").value,
-            transaction_ref: document.getElementById("txRef").value
-          })
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.detail || "Erreur d'envoi");
-        await syncUser();
-        fb.innerHTML = `<div class="msg warn">${data.message}</div>`;
-      } catch (e) {
-        fb.innerHTML = `<div class="msg err">${e.message}</div>`;
-      }
-    }
-
-    async function syncUser() {
-      if (!user) return;
-      const res = await fetch(`/api/user/${user.id}`);
-      if (!res.ok) return;
-      const data = await res.json();
-      user = data.user;
-      localStorage.setItem("eb_user", JSON.stringify(user));
-      renderTopTag();
-
-      const used = user.free_trial_used === 1;
-      document.getElementById("trialQuotaText").textContent = used
-        ? "0 vidéo disponible dans votre essai"
-        : "1 vidéo disponible dans votre essai";
-      document.getElementById("trialPill").textContent = used
-        ? "Essai gratuit déjà utilisé"
-        : "Essai limité à 1 vidéo";
-
-      document.getElementById("profileInfo").innerHTML = `
-        <div><strong>Compte :</strong> ${user.full_name || user.identifier}</div>
-        <div><strong>Identifiant :</strong> ${user.identifier}</div>
-        <div><strong>ID :</strong> #${user.id}</div>
-        <div><strong>Abonnement :</strong> ${user.subscription_status}</div>
-      `;
-
-      let views = 0, likes = 0, reach = 0;
-      const list = document.getElementById("stList");
-      list.innerHTML = "";
-      data.campaigns.forEach(c => {
-        views += c.views; likes += c.likes; reach += c.reach;
-        list.innerHTML += `
-          <div class="camp-card">
-            <div style="font-weight:700;margin-bottom:4px;">${c.platform} • ${c.status}</div>
-            <div style="color:#94a3b8;font-size:12px;word-break:break-all;margin-bottom:6px;">${c.video_url}</div>
-            <div>${c.views.toLocaleString()} vues • ${c.likes.toLocaleString()} likes • ${c.engagement_rate}%</div>
-          </div>
-        `;
-      });
-      document.getElementById("stViews").textContent = views.toLocaleString();
-      document.getElementById("stLikes").textContent = likes.toLocaleString();
-      document.getElementById("stReach").textContent = reach.toLocaleString();
-    }
-
-    async function fetchAdminPayments() {
-      const pin = document.getElementById("adminPin").value;
-      const box = document.getElementById("adminPaymentsBox");
-      box.innerHTML = "";
-      try {
-        const res = await fetch(`/api/admin/payments?admin_pin=${encodeURIComponent(pin)}`);
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.detail || "PIN invalide");
-        data.payments.forEach(p => {
-          box.innerHTML += `
-            <div class="camp-card">
-              <div><strong>${p.full_name || p.identifier}</strong> — ${p.status}</div>
-              <div style="font-size:12px;color:#94a3b8;margin:4px 0;">${p.plan_type} | ${p.payment_method} | ${p.transaction_ref}</div>
-              ${p.status === "pending" ? `
-                <div style="display:flex;gap:8px;margin-top:6px;">
-                  <button onclick="decidePayment(${p.id},'approve')" style="flex:1;padding:6px;border:none;border-radius:8px;background:#10b981;color:#052e16;font-weight:700;cursor:pointer;">Approuver</button>
-                  <button onclick="decidePayment(${p.id},'reject')" style="flex:1;padding:6px;border:none;border-radius:8px;background:#ef4444;color:#fff;font-weight:700;cursor:pointer;">Rejeter</button>
-                </div>
-              ` : ""}
+    <!-- ===================================================================
+         MODALE 1B : MOT DE PASSE OUBLIÉ / RÉINITIALISATION
+         =================================================================== -->
+    <div id="modal-forgot" class="modal-overlay">
+        <div class="modal-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h3 style="font-size: 14px; font-weight: 800;">Réinitialiser le mot de passe</h3>
+                <button class="icon-btn" onclick="closeModal('modal-forgot')">✕</button>
             </div>
-          `;
+            <p style="font-size: 11px; color: var(--text-secondary); margin-bottom: 10px;">
+                Confirme ton numéro de téléphone et définis un nouveau mot de passe souverain.
+            </p>
+            <form onsubmit="resetPassword(event)" style="display: flex; flex-direction: column; gap: 8px;">
+                <input type="tel" id="forgot-phone" class="input-field" placeholder="Numéro de téléphone" value="+243 812 345 678" required>
+                <input type="password" id="forgot-new-pass" class="input-field" placeholder="Nouveau mot de passe (min. 6 caractères)" minlength="6" required>
+                <button type="submit" class="primary-btn vip-grad" style="margin-top: 4px;">Mettre à jour le mot de passe</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===================================================================
+         MODALE 1C : CODE PIN À 4 CHIFFRES
+         =================================================================== -->
+    <div id="modal-pin" class="modal-overlay">
+        <div class="modal-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h3 id="pin-modal-title" style="font-size: 14px; font-weight: 800;">Code PIN à 4 chiffres</h3>
+                <button class="icon-btn" onclick="closeModal('modal-pin')">✕</button>
+            </div>
+            <p id="pin-modal-desc" style="font-size: 11px; color: var(--text-secondary); margin-bottom: 10px;">
+                Entre ton code PIN à 4 chiffres.
+            </p>
+            <form onsubmit="handlePinSubmit(event)" style="display: flex; flex-direction: column; gap: 10px;">
+                <input type="password" id="pin-code-input" class="input-field" maxlength="4" pattern="\d{4}" inputmode="numeric" placeholder="•••• (4 chiffres)" required style="text-align: center; letter-spacing: 8px; font-size: 18px; font-weight: 800;">
+                <button type="submit" id="pin-submit-btn" class="primary-btn vvip-grad">Valider le PIN</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===================================================================
+         MODALE 2 : LECTEUR STORY 24H
+         =================================================================== -->
+    <div id="modal-story" class="modal-overlay">
+        <div class="modal-card" style="background: linear-gradient(160deg, #31102f, #18181b); text-align: center; padding: 28px 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <span id="story-viewer-title" style="font-size: 13px; font-weight: 800;">Story 24h</span>
+                <button class="icon-btn" onclick="closeModal('modal-story')">✕</button>
+            </div>
+            <div id="story-viewer-body" style="font-size: 15px; font-weight: 700; margin: 24px 0; line-height: 1.5;"></div>
+            <button class="primary-btn vip-grad" onclick="closeModal('modal-story'); switchTab('messages'); showToast('Réponse envoyée en privé sur Empire Chat !')">Répondre en privé</button>
+        </div>
+    </div>
+
+    <!-- ===================================================================
+         MODALE 3 : NOUVELLE PUBLICATION
+         =================================================================== -->
+    <div id="modal-post" class="modal-overlay">
+        <div class="modal-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h3 style="font-size: 14px; font-weight: 800;">Nouvelle publication mondiale</h3>
+                <button class="icon-btn" onclick="closeModal('modal-post')">✕</button>
+            </div>
+            <textarea id="new-post-content" class="input-field" rows="3" placeholder="Partage une photo, vidéo ou ton lien TikTok/YouTube à booster..."></textarea>
+            <button class="primary-btn vvip-grad" style="margin-top: 10px;" onclick="createPost()">Publier maintenant</button>
+        </div>
+    </div>
+
+    <!-- ===================================================================
+         MODALE 4 : PAIEMENT VIP & VVIP (M-PESA, AIRTEL, ILLICOCASH, VISA)
+         =================================================================== -->
+    <div id="modal-pay" class="modal-overlay">
+        <div class="modal-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <h3 id="pay-modal-title" style="font-size: 15px; font-weight: 900;">Abonnement VVIP — 35 $</h3>
+                <button class="icon-btn" onclick="closeModal('modal-pay')">✕</button>
+            </div>
+            <p style="font-size: 11px; color: var(--text-secondary);">Paiement sécurisé local ou international :</p>
+            <div class="pay-grid">
+                <button class="pay-option selected" onclick="choosePay(this, 'M-Pesa')">
+                    <div style="font-size: 12px; font-weight: 800; color: #34d399;">M-Pesa</div>
+                    <div style="font-size: 10px; color: var(--text-secondary);">Vodacom RDC</div>
+                </button>
+                <button class="pay-option" onclick="choosePay(this, 'Airtel Money')">
+                    <div style="font-size: 12px; font-weight: 800; color: #f87171;">Airtel Money</div>
+                    <div style="font-size: 10px; color: var(--text-secondary);">Mobile Money</div>
+                </button>
+                <button class="pay-option" onclick="choosePay(this, 'Illicocash')">
+                    <div style="font-size: 12px; font-weight: 800; color: #fbbf24;">Illicocash</div>
+                    <div style="font-size: 10px; color: var(--text-secondary);">Rawbank RDC</div>
+                </button>
+                <button class="pay-option" onclick="choosePay(this, 'Carte Visa')">
+                    <div style="font-size: 12px; font-weight: 800; color: #60a5fa;">Carte Visa</div>
+                    <div style="font-size: 10px; color: var(--text-secondary);">International</div>
+                </button>
+            </div>
+            <input type="text" class="input-field" value="+243 812 345 678" style="margin-bottom: 12px;">
+            <button class="primary-btn vvip-grad" onclick="confirmPayment()">Confirmer et activer maintenant</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    /* ==========================================================================
+       LOGIQUE APPLICATIVE 100% AUTONOME (ZÉRO SCRIPT EXTERNE + PERSISTANCE)
+       ========================================================================== */
+    const STORAGE_KEY = "empire_boost_state_v1";
+
+    const defaultState = {
+        user: {
+            nom: "Kabongo",
+            postnom: "Mbuyi",
+            avenue: "Av. de la Libération, Gombe • Kinshasa",
+            phone: "+243 812 345 678",
+            password: "",
+            pin: "1234",
+            tier: "GRATUIT",
+            friends: 142,
+            visits: 1284,
+            tiktok: 1420,
+            instagram: 980,
+            facebook: 650,
+            youtube: 400
+        },
+        selectedPlan: "VVIP",
+        selectedPay: "M-Pesa",
+        memberFilter: "all",
+        vipChatOnly: false,
+        activeChatId: null,
+        pinMode: "set",
+        reelIdx: 0
+    };
+
+    const members = [
+        { id: 1, name: "Sarah K.", initials: "SK", city: "Kinshasa 🇨🇩", region: "afrique", tier: "VIP", bio: "Célibataire • Mode & Rencontres", story: "Soirée VIP à Gombe ce soir ! Qui est connecté sur Empire-Boost ? ✨🥂", grad: "vip-grad" },
+        { id: 2, name: "David M.", initials: "DM", city: "Paris 🇫🇷", region: "monde", tier: "VVIP", bio: "Créateur TikTok 250K • Boost massif", story: "+12 000 abonnés gagnés cette semaine avec mon espace VVIP 🚀⚡", grad: "vvip-grad" },
+        { id: 3, name: "Amina B.", initials: "AB", city: "Dubaï 🇦🇪", region: "monde", tier: "VIP", bio: "Nouvelle sur le club célibataires VIP", story: "En direct depuis Dubaï 🌍 Prête pour de belles rencontres sur le club VIP !", grad: "vip-grad" },
+        { id: 4, name: "Junior L.", initials: "JL", city: "Lubumbashi 🇨🇩", region: "afrique", tier: "VVIP", bio: "YouTubeur & Entrepreneur", story: "Mon studio tourne à plein régime grâce au boost multi-plateformes 🔥🎬", grad: "vvip-grad" }
+    ];
+
+    let feedPosts = [
+        { id: 1, author: "Sarah K.", initials: "SK", city: "Kinshasa 🇨🇩", tier: "VIP", grad: "vip-grad", text: "Heureuse d'avoir rejoint la communauté VIP Empire-Boost ! Déjà de belles rencontres internationales 🌍✨", banner: "Club Privé Célibataires • Kinshasa & Monde", likes: 84, liked: false },
+        { id: 2, author: "David M.", initials: "DM", city: "Paris 🇫🇷", tier: "VVIP", grad: "vvip-grad", text: "Mon dernier Reel TikTok vient de dépasser 50 000 vues grâce au boost VVIP. Ajoutez-moi pour s'abonner mutuellement ! 🚀", banner: "+50 000 Vues Propulsées • TikTok & YouTube", likes: 219, liked: true }
+    ];
+
+    const reels = [
+        { title: "Explosion de vues TikTok & Instagram", desc: "Sarah K. • Kinshasa 🇨🇩 • 148 200 vues propulsées via le pack VVIP.", bg: "linear-gradient(160deg, #1e1b4b 0%, #31102f 50%, #09090b 100%)" },
+        { title: "Gagner 5 000 abonnés YouTube en 7 jours", desc: "David M. • Paris 🇫🇷 • 312 900 vues • Top Créateur VVIP.", bg: "linear-gradient(160deg, #451a03 0%, #7c2d12 50%, #09090b 100%)" }
+    ];
+
+    let chats = [
+        {
+            id: 1,
+            name: "Sarah K. (Club VIP)",
+            initials: "SK",
+            tier: "VIP",
+            unread: true,
+            messages: [
+                { text: "Salut ! J'ai vu ton profil sur Empire-Boost 😊", mine: false, photo: null, reactions: { "❤️": 1, "🔥": 0 } },
+                { text: "Tu es aussi dans l'espace VIP célibataires ?", mine: false, photo: null, reactions: { "❤️": 0, "🔥": 0 } }
+            ]
+        },
+        {
+            id: 2,
+            name: "Support VVIP & Boost",
+            initials: "EB",
+            tier: "VVIP",
+            unread: true,
+            messages: [
+                { text: "Bienvenue sur ton univers Empire-Boost ! Lie tes réseaux pour démarrer ta croissance.", mine: false, photo: null, reactions: { "🚀": 1, "🔥": 0 } }
+            ]
+        }
+    ];
+
+    const state = JSON.parse(JSON.stringify(defaultState));
+
+    function saveState() {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify({ state, feedPosts, chats }));
+        } catch (err) {
+            // Ignore si le stockage local est indisponible
+        }
+    }
+
+    function loadState() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (!raw) return;
+            const parsed = JSON.parse(raw);
+            if (parsed.state) {
+                Object.assign(state, parsed.state);
+                Object.assign(state.user, parsed.state.user || {});
+            }
+            if (Array.isArray(parsed.feedPosts) && parsed.feedPosts.length) feedPosts = parsed.feedPosts;
+            if (Array.isArray(parsed.chats) && parsed.chats.length) chats = parsed.chats;
+        } catch (err) {
+            // Garde l'état par défaut en cas d'erreur de lecture
+        }
+    }
+
+    // Initialisation immédiate du DOM
+    function initApp() {
+        loadState();
+        renderStories();
+        renderFeed();
+        renderChats();
+        renderMembers();
+        refreshProfileUI();
+    }
+
+    // Navigation entre les 5 onglets
+    function switchTab(tab) {
+        ["home", "reels", "messages", "search", "profile"].forEach(t => {
+            document.getElementById("panel-" + t).classList.remove("active");
+            document.getElementById("nav-" + t).classList.remove("active");
         });
-      } catch (e) {
-        box.innerHTML = `<div class="msg err">${e.message}</div>`;
+        document.getElementById("panel-" + tab).classList.add("active");
+        document.getElementById("nav-" + tab).classList.add("active");
+        if (tab === "profile") document.getElementById("dot-profile").style.display = "none";
+    }
+
+    // Rendu des Stories 24h
+    function renderStories() {
+        const container = document.getElementById("stories-list");
+        let html = `
+            <div class="story-card" onclick="showToast('Ta Story 24h est publiée sur tes serveurs Empire-Boost !')">
+                <div class="story-ring add-own">
+                    <div class="story-avatar" style="background: #27272a;">TOI</div>
+                    <span class="story-plus">+</span>
+                </div>
+                <span class="story-name" style="color: #fbbf24;">Ta Story</span>
+            </div>
+        `;
+        members.forEach(m => {
+            html += `
+                <div class="story-card" onclick="openStory(${m.id})">
+                    <div class="story-ring ${m.grad}">
+                        <div class="story-avatar ${m.grad}">${m.initials}</div>
+                    </div>
+                    <span class="story-name">${m.name}</span>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+    }
+
+    function openStory(id) {
+        const m = members.find(x => x.id === id);
+        if (!m) return;
+        document.getElementById("story-viewer-title").textContent = `${m.name} (${m.tier}) • ${m.city}`;
+        document.getElementById("story-viewer-body").textContent = m.story;
+        openModal("modal-story");
+    }
+
+    // Rendu Fil d'actualité
+    function renderFeed() {
+        const container = document.getElementById("feed-list");
+        container.innerHTML = feedPosts.map(p => `
+            <article class="post-card">
+                <div class="post-header">
+                    <div class="user-meta">
+                        <div class="avatar-circle ${p.grad}">${p.initials}</div>
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 6px;">
+                                <span style="font-size: 13px; font-weight: 800;">${p.author}</span>
+                                <span class="tier-badge ${p.grad}">${p.tier}</span>
+                            </div>
+                            <div style="font-size: 10px; color: var(--text-secondary);">${p.city} • En ligne</div>
+                        </div>
+                    </div>
+                    <button class="btn-connect" onclick="addRelation('${p.author}')">+ Relation</button>
+                </div>
+                <p style="font-size: 12px; color: #e4e4e7;">${p.text}</p>
+                ${p.banner ? `<div class="post-media ${p.grad}"><strong style="font-size: 14px;">${p.banner}</strong><span style="font-size: 10px; opacity: 0.85; margin-top: 4px;">Propulsé par Empire-Boost</span></div>` : ""}
+                <div class="post-actions">
+                    <div class="action-group">
+                        <button class="action-btn" style="color: ${p.liked ? '#ec4899' : 'inherit'};" onclick="toggleLike(${p.id})">
+                            ${p.liked ? "♥" : "♡"} ${p.likes}
+                        </button>
+                        <button class="action-btn" onclick="showToast('Commentaire ajouté !')">💬 Commenter</button>
+                    </div>
+                    <button class="action-btn" style="color: #fbbf24;" onclick="triggerBoost('${p.author}')">⚡ Booster</button>
+                </div>
+            </article>
+        `).join("");
+    }
+
+    function toggleLike(id) {
+        const p = feedPosts.find(x => x.id === id);
+        if (p) {
+            p.liked = !p.liked;
+            p.likes += p.liked ? 1 : -1;
+            saveState();
+            renderFeed();
+        }
+    }
+
+    function addRelation(name) {
+        state.user.friends += 1;
+        saveState();
+        refreshProfileUI();
+        showToast(`Demande de mise en relation envoyée à ${name} !`);
+    }
+
+    function createPost() {
+        const txt = document.getElementById("new-post-content").value.trim();
+        if (!txt) return showToast("Écris un message avant de publier.");
+        const nInit = (state.user.nom[0] || "E").toUpperCase();
+        const pInit = (state.user.postnom[0] || "B").toUpperCase();
+        feedPosts.unshift({
+            id: Date.now(),
+            author: `${state.user.nom} ${state.user.postnom}`,
+            initials: nInit + pInit,
+            city: "Kinshasa 🇨🇩",
+            tier: state.user.tier ===
+"GRATUIT" ? "MEMBRE" : state.user.tier,
+            grad: "vvip-grad",
+            text: txt,
+            banner: "Nouvelle Publication • Réseau Mondial Empire-Boost",
+            likes: 1,
+            liked: true
+        });
+        document.getElementById("new-post-content").value = "";
+        closeModal("modal-post");
+        saveState();
+        renderFeed();
+        showToast("Publication mise en ligne !");
+        savePostToServer(feedPosts[0]);
+    }
+
+    // Reels
+    function nextReel() {
+        state.reelIdx = (state.reelIdx + 1) % reels.length;
+        const r = reels[state.reelIdx];
+        document.getElementById("reel-title").textContent = r.title;
+        document.getElementById("reel-desc").textContent = r.desc;
+        document.getElementById("reel-container").style.background = r.bg;
+        saveState();
+    }
+
+    function triggerBoost(target) {
+        if (state.user.tier === "VVIP") {
+            showToast(`⚡ Boost VVIP activé sur : ${target} (+1 000 vues)`);
+        } else {
+            openPayModal("VVIP", "35 $");
+        }
+    }
+
+    // Messagerie Empire Chat enrichie (photos + réactions)
+    function filterChats(vipOnly) {
+        state.vipChatOnly = vipOnly;
+        document.getElementById("filter-chat-all").classList.toggle("active", !vipOnly);
+        document.getElementById("filter-chat-vip").classList.toggle("active", vipOnly);
+        renderChats();
+    }
+
+    function updateUnreadBadge() {
+        const count = chats.filter(c => c.unread).length;
+        const counterEl = document.getElementById("unread-counter");
+        const dotEl = document.getElementById("dot-messages");
+        if (counterEl) counterEl.textContent = count > 0 ? `${count} non lus` : "Tout lu";
+        if (dotEl) dotEl.style.display = count > 0 ? "block" : "none";
+    }
+
+    function renderChats() {
+        const list = document.getElementById("chats-list");
+        const filtered = state.vipChatOnly ? chats.filter(c => c.tier === "VIP") : chats;
+        list.innerHTML = filtered.map(c => {
+            const last = c.messages[c.messages.length - 1];
+            const preview = last ? (last.text || (last.photo ? "📷 Photo envoyée" : "")) : "";
+            return `
+                <div class="chat-row" onclick="openChatRoom(${c.id})">
+                    <div class="user-meta">
+                        <div style="position: relative;">
+                            <div class="avatar-circle ${c.tier === 'VVIP' ? 'vvip-grad' : 'vip-grad'}">${c.initials}</div>
+                            <span class="online-dot"></span>
+                        </div>
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 6px;">
+                                <span style="font-size: 13px; font-weight: 800;">${c.name}</span>
+                                <span class="tier-badge ${c.tier === 'VVIP' ? 'vvip-grad' : 'vip-grad'}">${c.tier}</span>
+                            </div>
+                            <div style="font-size: 11px; color: var(--text-secondary);">${preview}</div>
+                        </div>
+                    </div>
+                    ${c.unread ? '<span style="width: 9px; height: 9px; border-radius: 50%; background: #ef4444;"></span>' : ''}
+                </div>
+            `;
+        }).join("");
+        updateUnreadBadge();
+    }
+
+    function openChatRoom(id) {
+        const c = chats.find(x => x.id === id);
+        if (!c) return;
+        c.unread = false;
+        state.activeChatId = id;
+        saveState();
+        updateUnreadBadge();
+        document.getElementById("chat-inbox").style.display = "none";
+        document.getElementById("chat-room").classList.add("open");
+        document.getElementById("room-name").textContent = c.name;
+        document.getElementById("room-badge").textContent = c.tier;
+        renderRoomMessages(c);
+    }
+
+    function closeChatRoom() {
+        document.getElementById("chat-room").classList.remove("open");
+        document.getElementById("chat-inbox").style.display = "block";
+        renderChats();
+    }
+
+    function renderRoomMessages(c) {
+        const box = document.getElementById("room-messages");
+        box.innerHTML = c.messages.map((m, mIdx) => {
+            const rx = m.reactions || { "❤️": 0, "🔥": 0, "🚀": 0 };
+            return `
+                <div class="msg-bubble ${m.mine ? 'msg-me' : 'msg-them'}">
+                    ${m.text ? `<div>${m.text}</div>` : ""}
+                    ${m.photo ? `<img src="${m.photo}" alt="Photo partagée" class="msg-photo">` : ""}
+                    <div class="msg-reactions">
+                        <button type="button" class="react-chip" onclick="toggleMsgReaction(${mIdx}, '❤️')">❤️ ${rx["❤️"] || 0}</button>
+                        <button type="button" class="react-chip" onclick="toggleMsgReaction(${mIdx}, '🔥')">🔥 ${rx["🔥"] || 0}</button>
+                        <button type="button" class="react-chip" onclick="toggleMsgReaction(${mIdx}, '🚀')">🚀 ${rx["🚀"] || 0}</button>
+                    </div>
+                </div>
+            `;
+        }).join("");
+        box.scrollTop = box.scrollHeight;
+    }
+
+    function toggleMsgReaction(mIdx, emoji) {
+        const c = chats.find(x => x.id === state.activeChatId);
+        if (!c || !c.messages[mIdx]) return;
+        if (!c.messages[mIdx].reactions) c.messages[mIdx].reactions = { "❤️": 0, "🔥": 0, "🚀": 0 };
+        c.messages[mIdx].reactions[emoji] = (c.messages[mIdx].reactions[emoji] || 0) + 1;
+        saveState();
+        renderRoomMessages(c);
+    }
+
+    function sendMessage(e) {
+        e.preventDefault();
+        const input = document.getElementById("msg-input");
+        const val = input.value.trim();
+        if (!val) return;
+        const c = chats.find(x => x.id === state.activeChatId);
+        if (c) {
+            c.messages.push({ text: val, mine: true, photo: null, reactions: { "❤️": 0, "🔥": 0, "🚀": 0 } });
+            input.value = "";
+            document.getElementById("room-status").textContent = "● En ligne maintenant";
+            saveState();
+            renderRoomMessages(c);
+        }
+    }
+
+    function sendPhotoMessage(e) {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+            const c = chats.find(x => x.id === state.activeChatId);
+            if (c) {
+                c.messages.push({ text: "", mine: true, photo: ev.target.result, reactions: { "❤️": 0, "🔥": 0, "🚀": 0 } });
+                saveState();
+                renderRoomMessages(c);
+                showToast("Photo envoyée dans la discussion !");
+            }
+        };
+        reader.readAsDataURL(file);
+        e.target.value = "";
+    }
+
+    function showTyping() {
+        document.getElementById("room-status").textContent = "✍️ est en train d'écrire...";
+    }
+
+    function sendEmoji(emoji) {
+        const c = chats.find(x => x.id === state.activeChatId);
+        if (c) {
+            c.messages.push({ text: emoji, mine: true, photo: null, reactions: { "❤️": 0, "🔥": 0, "🚀": 0 } });
+            saveState();
+            renderRoomMessages(c);
+        }
+    }
+
+    function sendVoiceNote() {
+        const c = chats.find(x => x.id === state.activeChatId);
+        if (c) {
+            c.messages.push({ text: "🎙️ Note vocale Empire-Boost (0:14) ılılıllı", mine: true, photo: null, reactions: { "❤️": 0, "🔥": 0, "🚀": 0 } });
+            saveState();
+            renderRoomMessages(c);
+            showToast("Note vocale envoyée !");
+        }
+    }
+
+    // Recherche mondiale & Multi-plateformes
+    function setMemberFilter(filter, btn) {
+        state.memberFilter = filter;
+        document.querySelectorAll("#panel-search .pill-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        renderMembers();
+    }
+
+    function renderMembers() {
+        const q = (document.getElementById("search-query").value || "").toLowerCase();
+        const filtered = members.filter(m => {
+            const matchType = state.memberFilter === "all" ||
+                (state.memberFilter === "afrique" && m.region === "afrique") ||
+                m.tier.toLowerCase() === state.memberFilter;
+            const matchText = m.name.toLowerCase().includes(q) || m.city.toLowerCase().includes(q) || m.bio.toLowerCase().includes(q);
+            return matchType && matchText;
+        });
+
+        document.getElementById("members-list").innerHTML = filtered.map(m => `
+            <div class="chat-row">
+                <div class="user-meta">
+                    <div class="avatar-circle ${m.grad}">${m.initials}</div>
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <span style="font-size: 13px; font-weight: 800;">${m.name}</span>
+                            <span class="tier-badge ${m.grad}">${m.tier}</span>
+                        </div>
+                        <div style="font-size: 10px; color: #fbbf24;">${m.city}</div>
+                        <div style="font-size: 11px; color: var(--text-secondary);">${m.bio}</div>
+                    </div>
+                </div>
+                <button class="btn-connect" onclick="addRelation('${m.name}')">+ Ajouter</button>
+            </div>
+        `).join("");
+    }
+
+    function boostNetwork(key, label) {
+        state.user[key] += 25;
+        saveState();
+        refreshProfileUI();
+        showToast(`+25 nouveaux abonnés ajoutés sur ton compte ${label} !`);
+    }
+
+    // Profil, Inscription, Mot de passe, PIN & Paiements VIP/VVIP
+    function submitRegistration(e) {
+        e.preventDefault();
+        state.user.nom = document.getElementById("in-nom").value.trim() || "Kabongo";
+        state.user.postnom = document.getElementById("in-postnom").value.trim() || "Mbuyi";
+        state.user.avenue = document.getElementById("in-avenue").value.trim() || "Kinshasa";
+        state.user.phone = document.getElementById("in-phone").value.trim() || "+243 812 345 678";
+        state.user.password = document.getElementById("in-password").value;
+        saveState();
+        refreshProfileUI();
+        closeModal("modal-auth");
+        showToast(`Bienvenue ${state.user.nom} ${state.user.postnom} dans ton univers Empire-Boost !`);
+    }
+
+    function resetPassword(e) {
+        e.preventDefault();
+        const phone = document.getElementById("forgot-phone").value.trim();
+        const newPass = document.getElementById("forgot-new-pass").value;
+        if (phone) state.user.phone = phone;
+        state.user.password = newPass;
+        saveState();
+        closeModal("modal-forgot");
+        showToast("Mot de passe réinitialisé avec succès !");
+    }
+
+    function openPinModal(mode) {
+        state.pinMode = mode;
+        const title = document.getElementById("pin-modal-title");
+        const desc = document.getElementById("pin-modal-desc");
+        const btn = document.getElementById("pin-submit-btn");
+        const input = document.getElementById("pin-code-input");
+        input.value = "";
+        if (mode === "set") {
+            title.textContent = "Définir ton code PIN (4 chiffres)";
+            desc.textContent = "Choisis un code secret à 4 chiffres pour protéger ton accès.";
+            btn.textContent = "Enregistrer le PIN";
+        } else {
+            title.textContent = "Vérification code PIN";
+            desc.textContent = "Entre ton code PIN à 4 chiffres pour déverrouiller.";
+            btn.textContent = "Déverrouiller";
+        }
+        openModal("modal-pin");
+    }
+
+    function handlePinSubmit(e) {
+        e.preventDefault();
+        const code = document.getElementById("pin-code-input").value.trim();
+        if (!/^\d{4}$/.test(code)) {
+            return showToast("Le code PIN doit contenir exactement 4 chiffres.");
+        }
+        if (state.pinMode === "set") {
+            state.user.pin = code;
+            saveState();
+            closeModal("modal-pin");
+            showToast("Code PIN à 4 chiffres enregistré !");
+        } else {
+            if (code === (state.user.pin || "1234")) {
+                closeModal("modal-pin");
+                showToast("Code PIN validé — Accès autorisé !");
+            } else {
+                showToast("Code PIN incorrect. Réessaie.");
+            }
+        }
+    }
+
+    function quickLogin(provider) {
+        closeModal("modal-auth");
+        showToast(`Connexion souveraine réussie via ${provider} !`);
+    }
+
+    function openPayModal(plan, price) {
+        state.selectedPlan = plan;
+        document.getElementById("pay-modal-title").textContent = `Abonnement ${plan} — ${price}`;
+        openModal("modal-pay");
+    }
+
+    function choosePay(btn, method) {
+        state.selectedPay = method;
+        document.querySelectorAll(".pay-option").forEach(el => el.classList.remove("selected"));
+        btn.classList.add("selected");
+    }
+
+    function confirmPayment() {
+        state.user.tier = state.selectedPlan;
+        if (state.user.tier === "VVIP") {
+            state.user.tiktok += 1500;
+            state.user.instagram += 1000;
+            state.user.facebook += 800;
+            state.user.youtube += 500;
+        }
+        saveState();
+        refreshProfileUI();
+        closeModal("modal-pay");
+        showToast(`Paiement ${state.selectedPay} validé ! Statut ${state.user.tier} activé.`);
+    }
+
+    function refreshProfileUI() {
+        const nInit = (state.user.nom[0] || "E").toUpperCase();
+        const pInit = (state.user.postnom[0] || "B").toUpperCase();
+        document.getElementById("prof-name").textContent = `${state.user.nom} ${state.user.postnom}`;
+        document.getElementById("prof-initials").textContent = nInit + pInit;
+        document.getElementById("prof-address").textContent = `📍 ${state.user.avenue}`;
+        document.getElementById("prof-phone").textContent = `📱 ${state.user.phone}`;
+        document.getElementById("stat-friends").textContent = state.user.friends;
+        document.getElementById("stat-visits").textContent = state.user.visits;
+
+        const total = state.user.tiktok + state.user.instagram + state.user.facebook + state.user.youtube;
+        document.getElementById("stat-total").textContent = total;
+        document.getElementById("cnt-tiktok").textContent = state.user.tiktok;
+        document.getElementById("cnt-instagram").textContent = state.user.instagram;
+        document.getElementById("cnt-facebook").textContent = state.user.facebook;
+        document.getElementById("cnt-youtube").textContent = state.user.youtube;
+
+        const badge = document.getElementById("prof-tier");
+        if (state.user.tier === "VIP") {
+            badge.className = "tier-badge vip-grad";
+            badge.textContent = "MEMBRE VIP • RENCONTRES";
+        } else if (state.user.tier === "VVIP") {
+            badge.className = "tier-badge vvip-grad";
+            badge.textContent = "MEMBRE VVIP • BOOST ILLIMITÉ";
+        } else {
+            badge.className = "tier-badge";
+            badge.style.background = "var(--bg-elevated)";
+            badge.style.border = "1px solid var(--border-color)";
+            badge.textContent = "GRATUIT";
+        }
+    }
+
+    // Gestion des modales & Toast
+    function openModal(id) {
+        document.getElementById(id).classList.add("open");
+    }
+    function closeModal(id) {
+        document.getElementById(id).classList.remove("open");
+    }
+
+    let toastTimer;
+    function showToast(msg) {
+        const t = document.getElementById("toast");
+        t.textContent = msg;
+        t.classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => t.classList.remove("show"), 3200);
+    }
+    // ==========================================================================
+    // LIAISON SERVEUR FLASK / SQLITE (empire_boost.db)
+    // ==========================================================================
+    async function syncPostsFromServer() {
+        try {
+            const res = await fetch("/api/posts");
+            if (!res.ok) return;
+            const rows = await res.json();
+            if (Array.isArray(rows) && rows.length > 0) {
+                const serverPosts = rows.map(r => ({
+                    id: r.id,
+                    author: r.author,
+                    initials: r.initials,
+                    city: r.city,
+                    tier: r.tier,
+                    grad: r.grad || "vvip-grad",
+                    text: r.text,
+                    banner: r.banner || "",
+                    likes: r.likes || 1,
+                    liked: false
+                }));
+                feedPosts = serverPosts;
+                saveState();
+                renderFeed();
+            }
+        } catch (err) {
+            // Garde l'affichage local si le serveur est hors ligne
+        }
+    }
+
+    async function savePostToServer(postObj) {
+        try {
+            const res = await fetch("/api/posts", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(postObj)
+            });
+            if (res.ok) {
+                await syncPostsFromServer();
+            }
+        } catch (err) {
+            // Garde la sauvegarde locale en cas de coupure
+        }
+    }
+
+    async function syncChatFromServer(chatId) {
+        try {
+            const res = await fetch(`/api/messages/${chatId}`);
+            if (!res.ok) return;
+            const rows = await res.json();
+            const c = chats.find(x => x.id === chatId);
+            if (c && Array.isArray(rows) && rows.length > 0) {
+                c.messages = rows.map(m => ({
+                    text: m.text || "",
+                    mine: Boolean(m.mine),
+                    photo: m.photo || null,
+                    reactions: { "❤️": 0, "🔥": 0, "🚀": 0 }
+                }));
+                saveState();
+                if (state.activeChatId === chatId) {
+                    renderRoomMessages(c);
+                }
+            }
+        } catch (err) {
+            // Garde l'affichage local si le serveur est hors ligne
+        }
+    }
+
+    async function saveMessageToServer(chatId, msgObj) {
+        try {
+            await fetch(`/api/messages/${chatId}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    text: msgObj.text || "",
+                    mine: msgObj.mine ? 1 : 0,
+                    photo: msgObj.photo || null
+                })
+            });
+        } catch (err) {
+            // Garde la sauvegarde locale en cas de coupure
+        }
+    } 
+ document.addEventListener("click", function (e) {
+  const target = e.target.closest("button, div, span, a");
+  if (!target) return;
+  const txt = (target.textContent || "").trim();
+  if (txt.includes("Ta Story") || txt === "TOI" || txt === "+") {
+    const savedStory = localStorage.getItem("empireCustomStory") || "Ma Story en direct — Empire-Boost";
+    const existing = document.getElementById("empireStoryModal");
+    if (existing) existing.remove();
+    const modal = document.createElement("div");
+    modal.id = "empireStoryModal";
+    modal.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;z-index:99999;padding:16px;";
+    modal.innerHTML = '<div style="background:#161822;color:#fff;border:1px solid #f59e0b;border-radius:14px;padding:20px;max-width:360px;width:100%;text-align:center;font-family:sans-serif;"><div style="font-size:12px;color:#f59e0b;font-weight:bold;margin-bottom:8px;">STORY 24H • EMPIRE-BOOST</div><div id="storyPreviewText" style="font-size:15px;font-weight:bold;margin-bottom:12px;word-break:break-word;">' + savedStory + '</div><input id="storyInputBox" type="text" placeholder="Écris ta nouvelle story ou colle un lien..." style="width:100%;padding:9px;border-radius:8px;border:1px solid #334155;background:#0f172a;color:#fff;margin-bottom:12px;box-sizing:border-box;"><div style="display:flex;gap:8px;justify-content:center;"><button id="saveEmpireStory" style="background:#f59e0b;color:#000;border:none;padding:9px 14px;border-radius:8px;font-weight:bold;cursor:pointer;">Mettre à jour</button><button id="closeEmpireStory" style="background:#334155;color:#fff;border:none;padding:9px 14px;border-radius:8px;font-weight:bold;cursor:pointer;">Fermer</button></div></div>';
+    document.body.appendChild(modal);
+    document.getElementById("saveEmpireStory").onclick = function () {
+      const val = (document.getElementById("storyInputBox").value || "").trim();
+      if (val) {
+        localStorage.setItem("empireCustomStory", val);
+        document.getElementById("storyPreviewText").textContent = val;
+        document.getElementById("storyInputBox").value = "";
       }
-    }
+    };
+    document.getElementById("closeEmpireStory").onclick = function () {
+      modal.remove();
+    };
+  }
+}, true);
+async function registerOrLoginPhone(phone, password, mode = "register") {
+  const endpoint = mode === "login" ? "/api/auth/login" : "/api/auth/register";
+  const res = await fetch(endpoint, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ phone, password, provider: "phone" })
+  });
+  const data = await res.json();
+  if (data.ok && data.account_id) {
+    localStorage.setItem("empireAccountId", String(data.account_id));
+  }
+  return data;
+}
 
-    async function decidePayment(paymentId, action) {
-      const pin = document.getElementById("adminPin").value;
-      await fetch("/api/admin/review", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ admin_pin: pin, payment_id: paymentId, action })
-      });
-      await fetchAdminPayments();
-      await syncUser();
-    }
+async function signInWithOAuth(provider, email) {
+  const res = await fetch("/api/auth/register", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ provider, email })
+  });
+  const data = await res.json();
+  if (data.ok && data.account_id) {
+    localStorage.setItem("empireAccountId", String(data.account_id));
+  }
+  return data;
+}
 
-    function signOut() {
-      localStorage.removeItem("eb_user");
-      user = null;
-      renderTopTag();
-      goScreen(1);
-    }
-
-    renderTopTag();
-    if (user) syncUser().then(() => goScreen(2));
-  </script>
+async function paySubscription(paymentMethod) {
+  const accountId = Number(localStorage.getItem("empireAccountId"));
+  const res = await fetch("/api/subscription/activate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ account_id: accountId, payment_method: paymentMethod, days: 30 })
+  });
+  return await res.json();
+}
+   
+    // Démarrage immédiat
+    initApp();
+</script>
 </body>
 </html>

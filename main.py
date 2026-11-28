@@ -1,23 +1,14 @@
-import sqlite3
+import re
 from datetime import datetime, timedelta
-from typing import Optional
-from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
-from pydantic import BaseModel
+from werkzeug.security import generate_password_hash, check_password_hash
+import os
+import sqlite3
+from flask import Flask, jsonify, request, send_from_directory
 
-app = FastAPI(title="Empire Boost Pro API")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, "empire_boost.db")
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-DB_PATH = "empire_boost.db"
-ADMIN_PIN = "2026"  # Code PIN administrateur pour valider les paiements
+app = Flask(__name__, static_folder=BASE_DIR, static_url_path="")
 
 
 def get_db():
@@ -27,341 +18,258 @@ def get_db():
 
 
 def init_db():
-    conn = get_db()
-    cur = conn.cursor()
-    cur.execute("""
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            provider TEXT NOT NULL,
-            identifier TEXT UNIQUE NOT NULL,
-            full_name TEXT,
-            password TEXT,
-            free_trial_used INTEGER DEFAULT 0,
-            subscription_status TEXT DEFAULT 'inactive',
-            plan_type TEXT,
-            subscription_expires_at TEXT,
-            created_at TEXT NOT NULL
+    with get_db() as conn:
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                nom TEXT NOT NULL,
+                postnom TEXT NOT NULL,
+                avenue TEXT NOT NULL,
+                phone TEXT NOT NULL,
+                tier TEXT DEFAULT 'GRATUIT',
+                friends INTEGER DEFAULT 142,
+                visits INTEGER DEFAULT 1284,
+                tiktok INTEGER DEFAULT 1420,
+                instagram INTEGER DEFAULT 980,
+                facebook INTEGER DEFAULT 650,
+                youtube INTEGER DEFAULT 400
+            )
+            """
         )
-    """)
-    cur.execute("""
-        CREATE TABLE IF NOT EXISTS campaigns (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER NOT NULL,
-            platform TEXT NOT NULL,
-            objective TEXT NOT NULL,
-            video_url TEXT NOT NULL,
-            is_free_trial INTEGER DEFAULT 0,
-            status TEXT DEFAULT 'Actif',
-            views_delivered INTEGER DEFAULT 0,
-            likes_delivered INTEGER DEFAULT 0,
-            reach_delivered INTEGER DEFAULT 0,
-            created_at TEXT NOT NULL,
-            FOREIGN KEY (user_id) REFERENCES users(id)
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS posts (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                author TEXT NOT NULL,
+                initials TEXT NOT NULL,
+                city TEXT DEFAULT 'Kinshasa 🇨🇩',
+                tier TEXT DEFAULT 'MEMBRE',
+                grad TEXT DEFAULT 'vvip-grad',
+                text TEXT NOT NULL,
+                banner TEXT DEFAULT '',
+                likes INTEGER DEFAULT 1
+            )
+            """
         )
-    """)
-    cur.execute("""
-        CREATE TABLE IF NOT EXISTS payments (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER NOT NULL,
-            plan_type TEXT NOT NULL,
-            amount_usd REAL NOT NULL,
-            payment_method TEXT NOT NULL,
-            transaction_ref TEXT NOT NULL,
-            status TEXT DEFAULT 'pending',
-            created_at TEXT NOT NULL,
-            reviewed_at TEXT,
-            FOREIGN KEY (user_id) REFERENCES users(id)
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS messages (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                chat_id INTEGER NOT NULL,
+                text TEXT DEFAULT '',
+                mine INTEGER DEFAULT 1,
+                photo TEXT
+            )
+            """
         )
-    """)
-    conn.commit()
-    conn.close()
+        conn.commit()
 
+
+@app.route("/")
+def home():
+    return send_from_directory(BASE_DIR, "index.html")
+
+
+@app.route("/api/health", methods=["GET"])
+def health():
+    return jsonify({"status": "ok", "database": os.path.basename(DB_PATH)})
+
+
+@app.route("/api/posts", methods=["GET", "POST"])
+def handle_posts():
+    with get_db() as conn:
+        if request.method == "POST":
+            data = request.get_json(silent=True) or {}
+            text = (data.get("text") or "").strip()
+            if not text:
+                return jsonify({"error": "Message vide"}), 400
+            author = (data.get("author") or "Kabongo Mbuyi").strip()
+            initials = (data.get("initials") or "KM").strip()[:2].upper()
+            city = (data.get("city") or "Kinshasa 🇨🇩").strip()
+            tier = (data.get("tier") or "MEMBRE").strip()
+            grad = (data.get("grad") or "vvip-grad").strip()
+            banner = (data.get("banner") or "Nouvelle Publication • Réseau Mondial Empire-Boost").strip()
+
+            cur = conn.execute(
+                """
+                INSERT INTO posts (author, initials, city, tier, grad, text, banner, likes)
+                VALUES (?, ?, ?, ?, ?, ?, ?, 1)
+                """,
+                (author, initials, city, tier, grad, text, banner),
+            )
+            conn.commit()
+            return jsonify({"id": cur.lastrowid, "status": "saved"}), 201
+
+        rows = conn.execute("SELECT * FROM posts ORDER BY id DESC").fetchall()
+        return jsonify([dict(r) for r in rows])
+
+
+@app.route("/api/messages/<int:chat_id>", methods=["GET", "POST"])
+def handle_messages(chat_id):
+    with get_db() as conn:
+        if request.method == "POST":
+            data = request.get_json(silent=True) or {}
+            text = (data.get("text") or "").strip()
+            photo = data.get("photo")
+            mine = 1 if data.get("mine", True) else 0
+            if not text and not photo:
+                return jsonify({"error": "Message vide"}), 400
+
+            cur = conn.execute(
+                "INSERT INTO messages (chat_id, text, mine, photo) VALUES (?, ?, ?, ?)",
+                (chat_id, text, mine, photo),
+            )
+            conn.commit()
+            return jsonify({"id": cur.lastrowid, "status": "saved"}), 201
+
+        rows = conn.execute(
+            "SELECT * FROM messages WHERE chat_id = ? ORDER BY id ASC", (chat_id,)
+        ).fetchall()
+        return jsonify([dict(r) for r in rows])
+
+PHONE_REGEX = re.compile(r"^\+[1-9]\d{6,14}$")
+
+
+def ensure_app_tables():
+    init_db()
+    with get_db() as conn:
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS app_accounts (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                phone TEXT UNIQUE,
+                password_hash TEXT,
+                provider TEXT NOT NULL DEFAULT 'phone',
+                provider_email TEXT,
+                trial_ends_at TEXT NOT NULL,
+                is_vip INTEGER NOT NULL DEFAULT 0,
+                payment_method TEXT,
+                vip_expires_at TEXT,
+                created_at TEXT NOT NULL
+            )
+        """)
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS boost_orders (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                account_id INTEGER NOT NULL,
+                platform TEXT NOT NULL,
+                target_url TEXT NOT NULL,
+                quantity INTEGER NOT NULL,
+                status TEXT NOT NULL DEFAULT 'queued',
+                created_at TEXT NOT NULL,
+                FOREIGN KEY (account_id) REFERENCES app_accounts (id)
+            )
+        """)
+
+
+ensure_app_tables()
+
+
+def check_access_status(row):
+    now = datetime.utcnow()
+    if row["is_vip"] and row["vip_expires_at"]:
+        if now <= datetime.fromisoformat(row["vip_expires_at"]):
+            return {"has_access": True, "plan": "vip", "trial_active": False}
+    trial_end = datetime.fromisoformat(row["trial_ends_at"])
+    if now <= trial_end:
+        return {
+            "has_access": True,
+            "plan": "trial_3_days",
+            "trial_active": True,
+            "trial_ends_at": row["trial_ends_at"],
+        }
+    return {"has_access": False, "plan": "expired", "trial_active": False}
+
+
+@app.post("/api/auth/register")
+def api_auth_register():
+    data = request.get_json(force=True) or {}
+    provider = (data.get("provider") or "phone").strip().lower()
+    now = datetime.utcnow()
+    trial_end = (now + timedelta(days=3)).isoformat()
+
+    if provider == "phone":
+        phone = (data.get("phone") or "").strip()
+        password = data.get("password") or ""
+        if not PHONE_REGEX.match(phone):
+            return jsonify({"ok": False, "error": "Numéro international invalide (ex: +243..., +33..., +225...)"}), 400
+        if len(password) < 6:
+            return jsonify({"ok": False, "error": "Mot de passe : 6 caractères minimum"}), 400
+        try:
+            with get_db() as conn:
+                cur = conn.execute(
+                    """
+                    INSERT INTO app_accounts (phone, password_hash, provider, trial_ends_at, created_at)
+                    VALUES (?, ?, 'phone', ?, ?)
+                    """,
+                    (phone, generate_password_hash(password), trial_end, now.isoformat()),
+                )
+                account_id = cur.lastrowid
+            return jsonify({"ok": True, "account_id": account_id, "trial_days": 3, "trial_ends_at": trial_end}), 201
+        except sqlite3.IntegrityError:
+            return jsonify({"ok": False, "error": "Ce numéro est déjà enregistré"}), 409
+
+    if provider in ("google", "icloud"):
+        email = (data.get("email") or "").strip().lower()
+        if not email or "@" not in email:
+            return jsonify({"ok": False, "error": "Adresse e-mail Google ou iCloud requise"}), 400
+        with get_db() as conn:
+            existing = conn.execute(
+                "SELECT * FROM app_accounts WHERE provider_email = ?", (email,)
+            ).fetchone()
+            if existing:
+                return jsonify({"ok": True, "account_id": existing["id"], **check_access_status(existing)}), 200
+            cur = conn.execute(
+                """
+                INSERT INTO app_accounts (provider, provider_email, trial_ends_at, created_at)
+                VALUES (?, ?, ?, ?)
+                """,
+                (provider, email, trial_end, now.isoformat()),
+            )
+            account_id = cur.lastrowid
+        return jsonify({"ok": True, "account_id": account_id, "trial_days": 3, "trial_ends_at": trial_end}), 201
+
+    return jsonify({"ok": False, "error": "Mode de connexion non supporté"}), 400
+
+
+@app.post("/api/auth/login")
+def api_auth_login():
+    data = request.get_json(force=True) or {}
+    phone = (data.get("phone") or "").strip()
+    password = data.get("password") or ""
+    with get_db() as conn:
+        row = conn.execute("SELECT * FROM app_accounts WHERE phone = ?", (phone,)).fetchone()
+    if not row or not row["password_hash"] or not check_password_hash(row["password_hash"], password):
+        return jsonify({"ok": False, "error": "Numéro ou mot de passe incorrect"}), 401
+    return jsonify({"ok": True, "account_id": row["id"], **check_access_status(row)}), 200
+
+
+@app.post("/api/subscription/activate")
+def api_subscription_activate():
+    data = request.get_json(force=True) or {}
+    account_id = data.get("account_id")
+    method = (data.get("payment_method") or "").strip().lower()
+    days = int(data.get("days") or 30)
+
+    if method not in ("mpesa", "airtel", "visa"):
+        return jsonify({"ok": False, "error": "Moyen de paiement autorisé : mpesa, airtel ou visa"}), 400
+    if not account_id:
+        return jsonify({"ok": False, "error": "account_id requis"}), 400
+
+    now = datetime.utcnow()
+    vip_end = (now + timedelta(days=days)).isoformat()
+    with get_db() as conn:
+        conn.execute(
+            """
+            UPDATE app_accounts
+            SET is_vip = 1, payment_method = ?, vip_expires_at = ?
+            WHERE id = ?
+            """,
+            (method, vip_end, account_id),
+        )
+    return jsonify({"ok": True, "payment_method": method, "vip_expires_at": vip_end}), 200
 
 init_db()
 
-
-class AuthRequest(BaseModel):
-    provider: str  # 'google', 'icloud', 'phone'
-    identifier: str
-    full_name: Optional[str] = ""
-    password: Optional[str] = ""
-
-
-class BoostRequest(BaseModel):
-    user_id: int
-    platform: str
-    objective: str
-    video_url: str
-
-
-class PaymentSubmitRequest(BaseModel):
-    user_id: int
-    plan_type: str
-    payment_method: str
-    transaction_ref: str
-
-
-class AdminActionRequest(BaseModel):
-    admin_pin: str
-    payment_id: int
-    action: str  # 'approve' ou 'reject'
-
-
-def compute_live_stats(campaign_row):
-    created = datetime.fromisoformat(campaign_row["created_at"])
-    elapsed_minutes = max(1, int((datetime.utcnow() - created).total_seconds() // 60))
-    is_trial = campaign_row["is_free_trial"] == 1
-
-    if is_trial:
-        views = min(1250, 140 + elapsed_minutes * 37)
-        likes = int(views * 0.14)
-        reach = int(views * 1.35)
-    else:
-        views = min(25000, 850 + elapsed_minutes * 210)
-        likes = int(views * 0.18)
-        reach = int(views * 1.55)
-
-    return {
-        "id": campaign_row["id"],
-        "platform": campaign_row["platform"],
-        "objective": campaign_row["objective"],
-        "video_url": campaign_row["video_url"],
-        "is_free_trial": is_trial,
-        "status": "En diffusion" if views < (1250 if is_trial else 25000) else "Terminé",
-        "views": views,
-        "likes": likes,
-        "reach": reach,
-        "engagement_rate": round((likes / max(1, views)) * 100, 1),
-        "created_at": campaign_row["created_at"],
-    }
-
-
-@app.get("/")
-def serve_frontend():
-    return FileResponse("index.html")
-
-
-@app.post("/api/auth")
-def authenticate(req: AuthRequest):
-    identifier = req.identifier.strip().lower()
-    provider = req.provider.strip().lower()
-    full_name = (req.full_name or "").strip()
-    password = (req.password or "").strip()
-
-    if not identifier:
-        raise HTTPException(status_code=400, detail="Identifiant obligatoire.")
-
-    if provider in ("google", "icloud"):
-        if "@" not in identifier or "." not in identifier:
-            raise HTTPException(status_code=400, detail="Veuillez saisir une adresse e-mail valide.")
-        if not full_name:
-            raise HTTPException(status_code=400, detail="Veuillez entrer votre nom complet.")
-    elif provider == "phone":
-        if not identifier.startswith("+") or len(identifier) < 8:
-            raise HTTPException(status_code=400, detail="Numéro international invalide (ex: +243...).")
-        if len(password) < 4:
-            raise HTTPException(status_code=400, detail="Mot de passe requis (4 caractères minimum).")
-    else:
-        raise HTTPException(status_code=400, detail="Méthode de connexion non reconnue.")
-
-    conn = get_db()
-    cur = conn.cursor()
-    cur.execute("SELECT * FROM users WHERE identifier = ?", (identifier,))
-    user = cur.fetchone()
-
-    if user:
-        if provider == "phone" and user["password"] and user["password"] != password:
-            conn.close()
-            raise HTTPException(status_code=401, detail="Mot de passe incorrect pour ce numéro.")
-        user_id = user["id"]
-    else:
-        now = datetime.utcnow().isoformat()
-        cur.execute(
-            """
-            INSERT INTO users (provider, identifier, full_name, password, created_at)
-            VALUES (?, ?, ?, ?, ?)
-            """,
-            (provider, identifier, full_name or identifier, password, now),
-        )
-        conn.commit()
-        user_id = cur.lastrowid
-
-    cur.execute("SELECT * FROM users WHERE id = ?", (user_id,))
-    fresh_user = dict(cur.fetchone())
-    fresh_user.pop("password", None)
-    conn.close()
-    return {"user": fresh_user}
-
-
-@app.get("/api/user/{user_id}")
-def get_user_state(user_id: int):
-    conn = get_db()
-    cur = conn.cursor()
-    cur.execute("SELECT * FROM users WHERE id = ?", (user_id,))
-    user = cur.fetchone()
-    if not user:
-        conn.close()
-        raise HTTPException(status_code=404, detail="Utilisateur introuvable.")
-
-    cur.execute("SELECT * FROM campaigns WHERE user_id = ? ORDER BY id DESC", (user_id,))
-    campaigns = [compute_live_stats(row) for row in cur.fetchall()]
-
-    cur.execute("SELECT * FROM payments WHERE user_id = ? ORDER BY id DESC", (user_id,))
-    payments = [dict(row) for row in cur.fetchall()]
-
-    user_dict = dict(user)
-    user_dict.pop("password", None)
-    conn.close()
-    return {
-        "user": user_dict,
-        "campaigns": campaigns,
-        "payments": payments,
-    }
-
-
-@app.post("/api/boost")
-def launch_boost(req: BoostRequest):
-    url = req.video_url.strip()
-    if not url.startswith("http"):
-        raise HTTPException(status_code=400, detail="Veuillez coller un lien vidéo valide (https://...).")
-
-    conn = get_db()
-    cur = conn.cursor()
-    cur.execute("SELECT * FROM users WHERE id = ?", (req.user_id,))
-    user = cur.fetchone()
-    if not user:
-        conn.close()
-        raise HTTPException(status_code=404, detail="Utilisateur introuvable.")
-
-    is_subscribed = user["subscription_status"] == "active"
-    trial_used = user["free_trial_used"] == 1
-
-    if not is_subscribed and trial_used:
-        conn.close()
-        raise HTTPException(
-            status_code=403,
-            detail="Votre essai gratuit d'1 vidéo est déjà utilisé. Passez à un abonnement validé pour continuer.",
-        )
-
-    is_free_trial = 0 if is_subscribed else 1
-    now = datetime.utcnow().isoformat()
-
-    cur.execute(
-        """
-        INSERT INTO campaigns (user_id, platform, objective, video_url, is_free_trial, created_at)
-        VALUES (?, ?, ?, ?, ?, ?)
-        """,
-        (req.user_id, req.platform, req.objective, url, is_free_trial, now),
-    )
-
-    if is_free_trial == 1:
-        cur.execute("UPDATE users SET free_trial_used = 1 WHERE id = ?", (req.user_id,))
-
-    conn.commit()
-    campaign_id = cur.lastrowid
-    cur.execute("SELECT * FROM campaigns WHERE id = ?", (campaign_id,))
-    new_campaign = compute_live_stats(cur.fetchone())
-    conn.close()
-
-    return {
-        "message": "Campagne lancée avec succès ! Vos statistiques sont disponibles en direct.",
-        "campaign": new_campaign,
-    }
-
-
-@app.post("/api/subscribe")
-def submit_subscription(req: PaymentSubmitRequest):
-    ref = req.transaction_ref.strip()
-    if len(ref) < 6:
-        raise HTTPException(status_code=400, detail="Référence de transaction invalide ou trop courte.")
-
-    amount = 5.0 if "Semaine" in req.plan_type else 15.0
-
-    conn = get_db()
-    cur = conn.cursor()
-    cur.execute("SELECT * FROM users WHERE id = ?", (req.user_id,))
-    user = cur.fetchone()
-    if not user:
-        conn.close()
-        raise HTTPException(status_code=404, detail="Utilisateur introuvable.")
-
-    now = datetime.utcnow().isoformat()
-    cur.execute(
-        """
-        INSERT INTO payments (user_id, plan_type, amount_usd, payment_method, transaction_ref, status, created_at)
-        VALUES (?, ?, ?, ?, ?, 'pending', ?)
-        """,
-        (req.user_id, req.plan_type, amount, req.payment_method, ref, now),
-    )
-    cur.execute("UPDATE users SET subscription_status = 'pending' WHERE id = ?", (req.user_id,))
-    conn.commit()
-    conn.close()
-
-    return {
-        "status": "pending",
-        "message": f"Demande enregistrée (Réf: {ref}). Votre paiement {req.payment_method} est en attente de vérification par l'administrateur.",
-    }
-
-
-@app.get("/api/admin/payments")
-def list_payments(admin_pin: str):
-    if admin_pin != ADMIN_PIN:
-        raise HTTPException(status_code=401, detail="Code PIN administrateur incorrect.")
-
-    conn = get_db()
-    cur = conn.cursor()
-    cur.execute("""
-        SELECT p.*, u.identifier, u.full_name
-        FROM payments p
-        JOIN users u ON p.user_id = u.id
-        ORDER BY p.id DESC
-    """)
-    rows = [dict(r) for r in cur.fetchall()]
-    conn.close()
-    return {"payments": rows}
-
-
-@app.post("/api/admin/review")
-def review_payment(req: AdminActionRequest):
-    if req.admin_pin != ADMIN_PIN:
-        raise HTTPException(status_code=401, detail="Code PIN administrateur incorrect.")
-
-    conn = get_db()
-    cur = conn.cursor()
-    cur.execute("SELECT * FROM payments WHERE id = ?", (req.payment_id,))
-    payment = cur.fetchone()
-    if not payment:
-        conn.close()
-        raise HTTPException(status_code=404, detail="Paiement introuvable.")
-
-    now = datetime.utcnow().isoformat()
-    if req.action == "approve":
-        days = 7 if "Semaine" in payment["plan_type"] else 30
-        expires = (datetime.utcnow() + timedelta(days=days)).isoformat()
-        cur.execute(
-            "UPDATE payments SET status = 'approved', reviewed_at = ? WHERE id = ?",
-            (now, req.payment_id),
-        )
-        cur.execute(
-            """
-            UPDATE users
-            SET subscription_status = 'active', plan_type = ?, subscription_expires_at = ?
-            WHERE id = ?
-            """,
-            (payment["plan_type"], expires, payment["user_id"]),
-        )
-        msg = "Paiement approuvé et abonnement activé."
-    else:
-        cur.execute(
-            "UPDATE payments SET status = 'rejected', reviewed_at = ? WHERE id = ?",
-            (now, req.payment_id),
-        )
-        cur.execute(
-            "UPDATE users SET subscription_status = 'rejected' WHERE id = ?",
-            (payment["user_id"],),
-        )
-        msg = "Paiement rejeté."
-
-    conn.commit()
-    conn.close()
-    return {"message": msg}
+if __name__ == "__main__":
+    app.run(host="127.0.0.1", port=5000, debug=True)
