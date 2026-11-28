@@ -270,6 +270,9 @@ def api_subscription_activate():
     return jsonify({"ok": True, "payment_method": method, "vip_expires_at": vip_end}), 200
 
 init_db()
-
+@app.route("/manifest.json")
+def manifest():
+    return send_from_directory(".", "manifest.json", mimetype="application/manifest+json")
+    
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=5000, debug=True)
